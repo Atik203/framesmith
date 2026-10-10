@@ -109,7 +109,7 @@ def read_log(path: Path | None = None) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def load_brand(brand_id: str = "lanternfall", root: Path = ROOT) -> dict:
+def load_brand(brand_id: str = "framesmith", root: Path = ROOT) -> dict:
     import yaml
 
     path = root / "configs" / "brands" / f"{brand_id}.yaml"
@@ -125,7 +125,7 @@ def script_files(data: Path) -> list[Path]:
 def next_content_id(
     prefix: str, kind: str, data: Path, log_rows: Iterable[dict[str, str]] = ()
 ) -> str:
-    """Next free id such as lf-short-004, looking at script files and log.csv rows."""
+    """Next free id such as fs-short-004, looking at script files and log.csv rows."""
     pattern = re.compile(rf"^{re.escape(prefix)}-{re.escape(kind)}-(\d+)$")
     numbers = [0]
     names = [p.stem for p in script_files(data)]

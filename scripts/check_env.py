@@ -43,7 +43,7 @@ REQUIRED_FILES = [
     "blueprint.md",
     "log.csv",
     ".env.example",
-    "configs/brands/lanternfall.yaml",
+    "configs/brands/framesmith.yaml",
     "schemas/idea.schema.json",
     "schemas/script.schema.json",
     "schemas/render_spec.schema.json",

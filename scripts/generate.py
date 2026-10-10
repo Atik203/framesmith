@@ -222,7 +222,7 @@ def run_ideas(
 ) -> int:
     common.require_generation_enabled(env)
     data = common.data_dir(env)
-    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "lanternfall")
+    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "framesmith")
     if args.structure and args.structure not in brand["story_structures"]:
         raise ValueError(
             f"unknown structure {args.structure!r}; use one of {brand['story_structures']}"
@@ -277,7 +277,7 @@ def run_script(
 ) -> int:
     common.require_generation_enabled(env)
     data = common.data_dir(env)
-    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "lanternfall")
+    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "framesmith")
     structures = brand["story_structures"]
     low, high = SHORT_SECONDS
     if not low <= args.duration <= high:
@@ -373,7 +373,7 @@ def build_parser() -> argparse.ArgumentParser:
     source.add_argument("--idea-file", type=Path, help="idea batch JSON from `ideas`")
     source.add_argument("--premise", help="your own one-sentence premise")
     script.add_argument("--pick", type=int, default=1, help="idea number in the file (1-based)")
-    script.add_argument("--content-id", help="default: next lf-short-NNN")
+    script.add_argument("--content-id", help="default: next fs-short-NNN")
     script.add_argument("--structure", help="default: rotate so none repeats back to back")
     script.add_argument("--duration", type=int, default=45, help="target seconds (30-55)")
     script.add_argument("--force", action="store_true", help="overwrite an existing script")

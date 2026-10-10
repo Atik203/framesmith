@@ -70,7 +70,7 @@ def run(args: argparse.Namespace) -> int:
     except ValueError as exc:
         print(f"[FAIL] {exc}")
         return 1
-    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "lanternfall")
+    brand = common.load_brand(env.get("FRAMESMITH_BRAND") or "framesmith")
     narration = brand.get("narration", {})
     candidates = narration.get("voice_candidates", ["am_michael"])
     voice = args.voice or narration.get("voice_id") or candidates[0]
