@@ -34,6 +34,7 @@ Done when the source repository explains its scope and current limits, a code li
 - [x] Add project overview, planned workflow, current limitations, noncommercial code-license notice, and suggested GitHub description/topics to `README.md` (2026-10-10).
 - [x] Add PolyForm Noncommercial 1.0.0 for project code only (2026-10-10).
 - [x] Update blueprint and agent instructions to match the phased workbench plan (2026-10-10).
+- [x] Add GitHub contribution, security, conduct, issue, and pull request guidance (2026-10-10).
 - [ ] Verify the GitHub About description/topics are set; the current `gh` authentication token is invalid, so repository metadata could not be checked or changed from this session.
 - [ ] Owner reviews repository contents/history and changes GitHub visibility to public when ready. Visibility stays owner-controlled.
 

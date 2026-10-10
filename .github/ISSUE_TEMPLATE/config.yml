@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/Atik203/framesmith/security/advisories/new
+    about: Report security issues privately. If private reporting is unavailable, follow SECURITY.md.

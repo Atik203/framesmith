@@ -39,6 +39,12 @@ open-source license. The license covers project code only. Dependencies, model w
 effects, and generated story/media outputs have separate terms; consult their own licenses and the records in
 [`provenance/`](provenance/).
 
+## Contributing and project policies
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a change. Please report security issues privately
+using the process in [SECURITY.md](SECURITY.md), and follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+GitHub issue forms and the pull request checklist are provided under [`.github/`](.github/).
+
 ## GitHub project metadata
 
 Suggested repository description: **A work-in-progress, local-first, human-reviewed AI video production workbench.**
