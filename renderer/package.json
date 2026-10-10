@@ -1,9 +1,12 @@
 {
   "name": "renderer",
   "version": "1.0.0",
-  "description": "My Remotion video",
-  "repository": {},
-  "license": "UNLICENSED",
+  "description": "Remotion renderer for the Framesmith local-first video workbench",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Atik203/framesmith.git"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.534",

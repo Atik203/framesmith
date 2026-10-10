@@ -1,29 +1,45 @@
 # Lanternfall — AI Content Automation Business (codename: Framesmith) — Master Blueprint
 **Status:** Living source of truth / implementation blueprint
-**Version:** 1.3 (V1 → V1.5 Long-Form Pilot → V2 → V3) — revenue-first + long-form expansion + repo conventions; see Revision 1.2 and R14 below
-**Blueprint date:** 2026-10-08 (repo conventions added 2026-10-10)
-**Names:** Public brand Lanternfall; internal codename and repo Framesmith (never used publicly). See R13.
+**Version:** 1.4 (phased Framesmith workbench + Lanternfall content business) — see Revision 1.3 / R15 below for the current project build direction.
+**Blueprint date:** 2026-10-10
+**Names:** Framesmith is the software project/repository name and may appear on its public source-code pages. Lanternfall is the audience-facing video brand. See R13 and R15.
 **Primary objective:** Build a profitable, scalable, multi-niche, multi-platform English-language short-form content business using agentic automation, with human oversight during the early stages and progressively higher automation as the system proves itself.
 **Initial constraint:** V1 must be buildable in roughly 2–3 days and must be able to produce real videos. Platform publishing can be manual at first; the first target is 5–10 published videos, not a perfect autonomous factory.
 **Source-of-truth rule:** When implementation decisions conflict with this document, update this file first, then implement. Do not allow architecture, prompts, model choices, credentials, platform rules, or business assumptions to exist only in chat history.
 ## Revision 1.2 — Revenue-First, Budget-Gated Plan with V1.5 Long-Form Pilot (2026-10-08)
-**Status:** This section (R1–R14) overrides any conflicting statement elsewhere in this file. Parts II–XXXVIII stay as the long-term reference, but nothing in V2/V3 is built until its gate below is passed. The V1.5 long-form pilot (R12, Part IV.5) is a content experiment, not a framework build, and may start in week 2. Facts below were checked against the web on 2026-10-08; recheck before spending money.
+**Status:** R1–R14 govern Lanternfall content, publishing, rights, and business gates. Revision 1.3 / R15 below supersedes only conflicting software-project scope, repository identity, and source-availability decisions. Parts II–XXXVIII remain reference material; the long-form pilot (R12, Part IV.5) is a content experiment. Facts below were checked against the web on 2026-10-08; recheck before spending money.
+
+## Revision 1.3 — Review-Gated Framesmith Workbench (2026-10-10)
+**Status:** R15 below updates the software-project scope and public-source terms. It supersedes conflicting R1/R2/R13 statements about whether to build a local UI now and whether the Framesmith name may appear on software-repository pages. R1–R14 still govern Lanternfall content, human approval, rights/provenance, spending, and manual publishing unless R15 explicitly says otherwise. Framesmith is not yet a completed application; Roadmap.md records the actual state.
+
+### R15. Project direction, generation gates, and source availability
+- Build Framesmith in phases as a local-first, human-reviewed production workbench. The owner has chosen to develop the software workflow before proving the content business gates; Gate A/B and revenue gates remain business/monetization decisions, not prerequisites for the UI or workflow engine.
+- Keep the current Windows-first scripts and Remotion renderer as the production foundation. A local UI and a resumable, sequential job queue are planned, not implemented. Select the UI/runtime stack in a focused design step before adding it; do not introduce a broad agent framework, database, cloud orchestration service, or publishing integration by default.
+- Treat “agents” as bounded steps in one ordered pipeline. Run one model/GPU-heavy task at a time; stop/unload one local model before loading another. CPU narration, caption alignment, and deterministic rendering may follow. Persist each step's inputs, outputs, status, and errors so a failed run can resume without regenerating approved assets.
+- Target workflow: (1) draft five ideas; (2) owner chooses one or more; (3) draft premise/script and owner edits/approves; (4) generate stills sequentially; (5) owner reviews, accepts, or requests replacement; (6) only after an explicit owner click, generate motion shots; (7) assemble approved clips with narration, aligned captions, and licensed sound; (8) run technical and visual QA; (9) owner reviews final cut and publishes manually.
+- Make each approval a real stop in the queue: idea selection, script approval, image approval, any paid video-generation request, and final-cut approval. No agent publishes, uploads, or silently spends money.
+- The owner has tested FramePack and reports excessive laptop stress and slow generation on the RTX 3060 Laptop GPU with 6 GB VRAM. Do not make local video generation the default or promise it will be usable. Revisit only after a measured, owner-approved test.
+- Image-to-video APIs are optional experiments, not a default dependency. Before a paid request, show provider, shot duration/resolution, estimate including retries, and cumulative reel spend; require the owner to approve each run within a configured cap. Do not add credits, activate a subscription, or call a paid API without explicit approval. Recheck live prices and terms at test time. If no affordable option meets the motion-quality bar, stop and label the reel a draft; do not call a pan/zoom slideshow a fully animated video.
+- Keep idea/script generation, local image generation, Kokoro narration, forced alignment, Remotion/FFmpeg assembly, QA, and the UI usable without video-generation API spend. Keep platform publishing manual.
+- The repository may be made public by the owner as a source-available software project under PolyForm Noncommercial 1.0.0. This license is for the project code; it does not grant rights to generated stories/media, third-party dependencies, voices, models, fonts, or music. Maintain their separate terms and provenance. No generated media, model weights, secrets, or large binaries go into Git. Do not describe the project as OSI open source.
+- A GitHub repository description and topics should describe an in-progress, local-first, human-reviewed video workbench and must not imply that full-motion generation, a UI, or publishing automation is already working.
 
 ### R1. Priority change
-Order of work: (1) publish videos, (2) learn what earns, (3) earn, (4) only then automate or build framework.
-- Rule: build a tool only when doing the task by hand has already cost more than about 2 hours per week.
-- V1 has no framework work: one folder of Python scripts, one Remotion template, one tracking sheet.
-- Success in V1 is measured in published videos and viewer behavior, not architecture.
+For the Lanternfall content business, the order remains (1) publish videos, (2) learn what earns, (3) earn, (4) automate content work. For the Framesmith software project, R15 authorizes phased local workbench development before those business gates.
+- Avoid adding production tooling just to automate a task that has not become a demonstrated bottleneck; R15's explicitly requested local UI and resumable queue are the exception.
+- The present foundation is Python scripts, one Remotion renderer, and one tracking sheet. The local UI is planned and must not be described as built.
+- Content-business success is still measured in published videos and viewer behavior, not architecture.
 
 ### R2. Budget gates
 | Stage | Enter when | Monthly spend | What may be built |
 | --- | --- | --- | --- |
-| V1 | now | $0 (hard cap $20 total in the first 60 days, only to remove one named bottleneck) | scripts, ComfyUI, Kokoro, Remotion, tracking sheet |
+| V1 | now | $0 (hard cap $20 total in the first 60 days, only to remove one named bottleneck) | scripts, ComfyUI, Kokoro, Remotion, tracking sheet, phased local UI/serial queue per R15 |
 | V1.5 | week 2, once the R12 prerequisites are met | $0 | manual long-form pilots on the V1 stack; no new infrastructure |
 | V2 | net cash revenue of about $500/month (proposed: 2 consecutive months, all platforms and lanes) | $100–200 | quality upgrades first (R6), then automate the single most repetitive manual step |
 | V3 | net cash revenue of about $2,000–3,000/month (proposed: 3 consecutive months) | proposed: up to 30% of trailing 3-month net revenue | robust framework, service productization, second business |
 
 Net revenue means money received, not dashboard estimates.
+R15 supersedes these revenue gates only for the requested local UI and sequential workbench. Paid video APIs, cloud services, publishing integrations, and the broader V2/V3 business stack remain gated and require owner authorization.
 
 ### R3. Monetization reality check (verified 2026-10-08)
 | Platform | Current rule | Implication |
@@ -221,7 +237,7 @@ Once the content model is proven and the V2 gate is reached, automate the long-f
 | Item | Decision |
 | --- | --- |
 | Public brand | **Lanternfall** (display name on every platform) |
-| Internal codename and repo | **Framesmith** (format-neutral: Shorts and long-form). Never used on public pages. |
+| Software project/repo name | **Framesmith**. May be used on GitHub/source-code project pages. It must not appear in Lanternfall videos, captions, titles, descriptions, handles, or audience-facing brand pages. |
 | First brand config | `configs/brands/lanternfall.yaml`, `brand_id: lanternfall` |
 | Naming conventions | repo `framesmith`; env prefix `FRAMESMITH_`; bucket `framesmith`; Remotion project `renderer` |
 
@@ -254,7 +270,7 @@ Building the repo scaffold turned several open details into decisions. They bind
 | Render spec | Paths are relative to `v1/`: `assets/{id}/scene-01.png`, `audio/{id}.wav`, `subtitles/{id}.json` (Remotion draws the captions; `.ass` only for the FFmpeg-only fallback). Specs are saved as `v1/renders/{id}.spec.json` and committed, so a render can be reproduced. Shorts are 1080x1920, long-form 1920x1080, both 30 fps. |
 | Tracking log | `log.csv` columns: `content_id, content_type, parent_content_id, title, date, platform, url, story_structure, hook_family, narrator_style, visual_treatment, duration_seconds, script_version, model_names, active_minutes, cost_usd, human_pass, disclosure, views_24h, views_72h, views_latest, viewed_vs_swiped, avg_pct_viewed, followers_gained, ctr, first30_retention, avg_view_duration_s, notes`. Repeat the production fields on every platform row of a video. `scripts/review.py` takes the maximum of `active_minutes` and `cost_usd`, sums views and averages percentages per video. |
 | Kill switches | `FRAMESMITH_PUBLISHING_ENABLED` (default `false`) and `FRAMESMITH_GENERATION_ENABLED`; scripts call `common.require_generation_enabled()` before any generation. |
-| Tooling | Only `check_env`, `validate`, `generate`, `build_render_spec` and `review` exist so far. Add another script only when it covers a Day 1–3 step in R11 (narration, caption alignment, image driver, MP4 QA) or when R1's two-hours-per-week rule is met. |
+| Tooling | Current scripts are `check_env`, `validate`, `generate`, `build_render_spec`, `review`, `tts`, and `align`. A standalone MP4 QA command, ComfyUI driver, operator UI/job queue, full-motion video generation, and long-form script generation are not built. See R15 and Roadmap.md for the build phases. |
 | Brand lists | `configs/brands/lanternfall.yaml` holds the allowed `story_structures`, `hook_families`, `narrator_styles` and `visual_treatments`. Use exactly those values in `log.csv` so the R7 variation check can count them. |
 ## Executive Summary
 The business is a content operating system rather than a collection of one-off automation scripts. It will use a shared pipeline for ideation, research, scripting, asset generation, voice, subtitles, editing, quality assurance, publishing, analytics, and experimentation. Niche-specific agents will specialize the research and writing logic without creating entirely separate applications.
@@ -2417,6 +2433,7 @@ Build the channel toward sustainable original audience and watch behavior rather
 ```text
 blueprint.md                  # this document
 README.md                     # concise project entry point
+LICENSE                       # PolyForm Noncommercial 1.0.0 for project code only
 AGENTS.md  CLAUDE.md          # instructions for coding agents
 Roadmap.md                    # checkbox progress tracker
 .env.example                  # required variables
@@ -2477,6 +2494,14 @@ analytics/metrics.md          # metric definitions
 ## 2026-10-10 (V1 providers simplified)
 - Removed Gemini and Ollama from the supported provider implementation, environment check and tests. Framesmith V1 supports only OpenRouter then OpenAI; OpenCode Zen's free endpoint remains app-only and is not configured or used.
 - Removed Gemini and OpenCode credentials/model settings from the local `.env` and kept `.env.example` limited to the two supported providers.
+
+## 2026-10-10 (Revision 1.4, review-gated workbench direction)
+- Added R15: develop the local-first Framesmith workbench in phases now, without waiting on audience/revenue gates; keep Lanternfall publishing, business spend, and quality approvals governed by R1–R14.
+- Set the intended workflow to sequential generation with explicit owner checkpoints for ideas, scripts, images, paid motion generation, and final cut. Do not run GPU-heavy models concurrently.
+- Recorded the owner's FramePack experience (slow and stressful on the 6 GB laptop GPU); local video generation is not the default. Image-to-video APIs remain opt-in, budget-capped and subject to live price review and explicit approval.
+- Clarified that pan/zoom over stills is not a substitute for full-motion video when the quality bar calls for animation; a reel that misses that bar stays a draft.
+- Permitted the Framesmith name on software-repository pages, while keeping Lanternfall branding in audience-facing video content. Specified PolyForm Noncommercial 1.0.0 for project code only; generated media and dependencies retain separate rights.
+- Audit correction: the current source still includes the Ollama fallback between OpenRouter and OpenAI; the earlier provider-removal note is historical and does not describe the current implementation.
 ```
 # Part XXXVII — Current Tool References
 ## Official References
@@ -2619,9 +2644,11 @@ Use this when a platform policy changes, a model produces unsafe content, a cred
 10. Percentage of content rejected by QA.
 11. Percentage of assets with complete provenance.
 # Conclusion
-The first goal is not to build the final autonomous media company. The first goal is to prove the complete loop: idea → script → assets → voice → subtitles → render → manual publication → measurement. In Week 2–3, the same loop should be extended to one 8–12 minute long-form pilot per week so the business can compare short-form reach with long-form watch time and monetization potential before committing to V2 automation. Once that loop works, every V2/V3 component becomes an optimization rather than a speculative engineering project.
-The preferred V1 is intentionally simple: one English-speaking audience, one original story vertical, free-tier cloud LLMs for ideas and scripts (local Qwen only as a fallback), Kokoro for local narration, forced alignment for captions, ComfyUI for visuals, Remotion + FFmpeg for deterministic rendering, and manual platform publishing. The first 30 videos and two long-form pilots (R8) create the evidence needed to decide what deserves further investment.
-The long-term system is a portfolio engine: specialized niche agents sit on top of a shared infrastructure layer; model routing controls cost; durable workflows handle execution; provenance and policy systems protect the business; analytics and experiments determine what gets made next. The resulting asset is not merely a library of videos but a continually improving content-production and distribution system.
+The software goal is a local-first, review-gated workbench that carries a story from idea selection through approved assets, motion, narration, captions, deterministic assembly and technical QA. Build it sequentially, keep its GPU workload within the owner's 6 GB laptop, and never treat an unapproved output as a finished video. This application work can proceed before the Lanternfall business passes its audience and revenue gates.
+
+The production quality bar includes actual animated shots when the owner asks for full motion. Still-image pans and zooms may be useful previews, but they do not satisfy that bar. Since local FramePack was too slow and stressful on this machine and paid video APIs may not be sustainable, the workbench must make motion generation optional and cost-visible; if no approved option fits, stop at a clearly labeled draft. Audio, captions, assembly, provenance, final review and manual publishing remain separate, explicit steps.
+
+The current implementation is a set of Python scripts and a Remotion renderer, not the planned UI. Roadmap.md distinguishes working pieces from missing application features. The repository may be source-available under PolyForm Noncommercial 1.0.0; this license applies to project code only and does not replace third-party or generated-media terms.
 # Appendix F — Quick Decision Matrix
 | Question | Use this decision |
 | --- | --- |

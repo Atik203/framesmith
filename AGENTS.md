@@ -1,46 +1,46 @@
-# AGENTS.md — Framesmith (public brand: Lanternfall)
+# AGENTS.md — Framesmith (audience-facing brand: Lanternfall)
 
 Instructions for AI coding and content agents (Claude Code, Codex, Cursor, etc.) working in this repo.
 Humans: start with `README.md`. Progress lives in `Roadmap.md`.
 
 ## What this project is
 
-A private repo for an AI-assisted English-language video business: short-form (Shorts/Reels/TikTok) plus
+A local-first project for an AI-assisted English-language video business: short-form (Shorts/Reels/TikTok) plus
 8–12 minute YouTube long-form. First vertical: **original AI cinematic stories**.
 
-- Public brand: **Lanternfall**. Internal codename and repo: **Framesmith**.
-  Never put "Framesmith" in a video, caption, title, description, handle or any public page.
+- Audience-facing brand: **Lanternfall**. Software project/repo name: **Framesmith**.
+  Framesmith may appear on software repository pages; never put it in a Lanternfall video, caption,
+  title, description, handle or other audience-facing brand page.
 - Owner: Atikur, solo operator, Dhaka. Machine: Lenovo Legion 5 laptop, AMD Ryzen 7 5800H, **32 GB RAM**, RTX 3060 **6 GB**.
-- Goal order: publish videos -> learn what earns -> earn -> only then automate.
+- Lanternfall business order: publish videos -> learn what earns -> earn -> automate content work. The owner has
+  separately authorized phased development of the Framesmith local workbench under R15.
 
 ## Source of truth and progress
 
-- `blueprint.md` is the single source of truth. **Revision 1.2 (R1–R14, at the top) overrides any
-  conflicting statement elsewhere in it.** Text under a "Revision 1.2" banner is superseded.
+- `blueprint.md` is the single source of truth. **Revision 1.3 / R15 updates the software build direction
+  and repo identity/license; R1–R14 still govern content, provenance, spend, and manual publishing unless
+  R15 explicitly supersedes them.** Older text under superseded banners is historical reference.
 - If a decision conflicts with the blueprint, update `blueprint.md` first (add a change-log entry in
   Part XXXVI), then implement. Do not leave decisions only in chat, code comments or commit messages.
 - `Roadmap.md` is the checkbox tracker. When you finish a task, tick its box and add the date in the same
-  change. Only tick a box when its "done when" is really true. Do not invent boxes for V2/V3 work.
+  change. Only tick a box when its "done when" is really true. Keep future phases unchecked until complete.
 - External facts (YouTube/Meta/TikTok rules, prices, model and library versions) were checked on
   2026-10-08. Re-check before spending money or relying on them.
 
-## Current stage: V1 — zero cost, no framework
+## Current stage: phased local-first workbench
 
-- V1 is **one folder of Python scripts, one Remotion project, one tracking sheet (`log.csv`)**.
-- Build a tool only when doing the task by hand has already cost more than about 2 hours per week, or when
-  it covers a Day 1–3 step in blueprint R11 (narration, caption alignment, image driver, MP4 QA).
-- Do **not** add or propose yet: FastAPI, Next.js, Postgres/pgvector, Redis, Temporal, a LiteLLM server,
-  OpenAI Agents SDK, Docker/Kubernetes, multi-agent orchestration, platform publishing adapters, or
-  browser automation. They are gated by revenue (V2 at about $500/month net for 2 consecutive months;
-  V3 at about $2,000–3,000/month for 3).
-- Budget is $0. Hard cap $20 total in the first 60 days, only to remove one named bottleneck written down
-  first. Never add a paid service, paid API key or subscription without the owner saying so.
-- Gates: **A** day 14 = 10 videos published, <= 60 active minutes per video. **B** day 30 = 30 Shorts +
-  2 long-form pilots, >= 3 videos above 10k views, spend <= $20. If B fails, change hook family, format
-  or niche, not the tooling. `python scripts/review.py` shows progress.
-- Long-form (V1.5) is a manual content pilot in weeks 2–3 on the V1 stack: 1 per week, never more than 2.
-  It is not a reason to build infrastructure.
-
+- The current implementation is Python scripts plus one Remotion project and `log.csv`; the operator UI and
+  resumable sequential workflow are planned, not yet implemented. Follow R15 and the staged Roadmap.
+- Build the workbench incrementally without assuming a particular UI framework, database, or orchestration
+  dependency. Prefer local files and a small serial job queue; add infrastructure only for a demonstrated need.
+- Local video generation is not the default: the owner reports FramePack stresses the 6 GB laptop GPU and
+  takes too long. Image-to-video APIs are optional, cost-visible, per-run approved, and disabled until the
+  owner authorizes a budget. Still-image motion is not full-motion video.
+- Do not add platform publishing adapters or unattended uploads. Publishing remains manual.
+- Budget remains $0 by default and retains the existing $20 hard cap for the first 60 days. Never add a paid
+  service, paid API key or subscription without the owner saying so.
+- Gates A and B apply to publishing/business experiments, not to development of the workbench itself.
+- Long-form (V1.5) remains a manual content pilot, not a reason to add publishing automation.
 ## V1 stack (blueprint R5)
 
 | Function | Choice |
@@ -53,6 +53,10 @@ A private repo for an AI-assisted English-language video business: short-form (S
 | Music / SFX | Only assets with an explicit commercial license, recorded in `provenance/licenses.csv`. |
 | Tracking | `log.csv`, one row per video per platform (columns in blueprint R14). |
 | Publishing | Manual. Agents never publish or upload. |
+
+The planned operator workflow pauses for owner approval at idea selection, script approval, image review,
+paid video generation and final-cut review. Video generation never runs without an explicit click and budget
+approval.
 
 ## Repo layout
 
@@ -89,8 +93,8 @@ Paths inside a render spec are relative to `v1/`.
 | `scripts/review.py` | Gate A/B progress, R7 variation rules, best/worst videos from `log.csv`. Read-only. |
 | `scripts/common.py`, `scripts/llm.py` | Shared helpers (env, kill switches, ids) and the provider-fallback client. Import, do not run. |
 
-Not built yet (Roadmap): narration (`tts.py`), caption alignment (`align.py`), MP4 QA, ComfyUI driver,
-long-form script generation. Build each only when its Roadmap step is reached and the dependency is installed.
+`scripts/tts.py` and `scripts/align.py` exist. Not built yet: a standalone MP4 QA command, ComfyUI driver,
+full-motion video generation, operator UI/job queue, and long-form script generation. Follow the staged Roadmap.
 
 ## Conventions
 
@@ -130,6 +134,8 @@ long-form script generation. Build each only when its Roadmap step is reached an
 
 - "Open source" does not mean commercially unrestricted. Before using any model, checkpoint, voice, font,
   music or SFX in published work, add a row to `provenance/licenses.csv` with the license source.
+- The root `LICENSE` applies PolyForm Noncommercial 1.0.0 to project code only. It does not license generated
+  media, models, voices, fonts, music, SFX or dependencies; check and record their own terms.
 - Keep the ComfyUI workflow JSON (seed, checkpoint, prompt) for every generated image in
   `comfyui/workflows/`. Unknown license or provenance means hold for human review.
 

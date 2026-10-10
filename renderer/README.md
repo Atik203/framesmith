@@ -1,54 +1,17 @@
-# Remotion video
+# Framesmith renderer
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+This Remotion project assembles an approved render specification, scene media, narration, and caption timings into a video. The current implementation is a prototype and does not generate full-motion video shots.
 
-Welcome to your Remotion project!
+## Local development
 
-## Commands
-
-**Install Dependencies**
-
-```console
-npm i --loglevel=error
-```
-
-**Start Preview**
-
-```console
+```powershell
+npm ci
+npm run lint
 npm run dev
 ```
 
-**Render video**
+Render the registered composition from this directory with Remotion CLI after its content assets have been staged under `public/`. The output video belongs in the ignored `v1/renders/` working-data folder.
 
-```console
-npx remotion render
-```
+## Media and rights
 
-**Upgrade Remotion**
-
-```console
-npx remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
-
-## License
-
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+Do not commit generated media, narration, model weights, credentials, or large binaries. This package's source is covered by the root PolyForm Noncommercial 1.0.0 license. Remotion and all other dependencies retain their own licenses; review Remotion's current terms before any business/commercial use.

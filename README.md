@@ -1,13 +1,58 @@
 # Framesmith
 
-Private repo for **Lanternfall**, an AI-assisted English video brand (original cinematic stories as Shorts and
-8–12 minute YouTube episodes). *Framesmith* is the internal codename; never use it publicly.
+**A local-first, human-reviewed workbench for creating original short-form and long-form videos.** The project is
+under active development: its current foundation is Python production scripts and a Remotion renderer. The planned
+operator UI, resumable sequential workflow, image review screens, and full-motion video stage are not complete.
 
-Current stage: **V1, zero cost, no framework.** One folder of Python scripts, one Remotion project, one tracking
-sheet. The plan, gates and rules are in [`blueprint.md`](blueprint.md) (Revision 1.2 and R14 win on conflicts).
-Progress is in [`Roadmap.md`](Roadmap.md). AI agents read [`AGENTS.md`](AGENTS.md).
+The audience-facing video brand is **Lanternfall**. **Framesmith** is the name of this software project and may be
+used on its source-code pages; it must not appear in Lanternfall videos or audience-facing brand materials.
+
+## Planned workflow
+
+1. Draft five story ideas; the owner selects one or more.
+2. Draft a premise and script; the owner edits and approves them.
+3. Generate still images sequentially, then let the owner review and accept or replace them.
+4. Only after an explicit owner action, generate motion shots. Local video generation is not the default because
+   FramePack ran too slowly and stressed the owner's 6 GB laptop GPU. A paid image-to-video API is an optional,
+   cost-visible path, not yet selected or enabled.
+5. Assemble approved motion clips with narration and aligned captions, then run technical and visual QA.
+6. The owner reviews the final cut and publishes manually.
+
+The local UI and complete workflow are roadmap goals, not current capabilities. A pan/zoom treatment over still images
+is a draft/animatic and does not meet the project's full-motion quality bar. If no affordable, approved motion option
+works, keep the reel marked as a draft.
+
+## Current status
+
+See [`Roadmap.md`](Roadmap.md) for verified progress and remaining work. [`blueprint.md`](blueprint.md) is the source
+of truth; [`AGENTS.md`](AGENTS.md) contains repository instructions.
+
+The repository contains code and small configuration/specification files. Generated images, audio, model weights,
+rendered videos, secrets, and other large media are excluded from Git. A successfully rendered MP4 is not the same as
+an owner-approved or publish-ready video.
+
+## License and rights
+
+Project code is licensed under [PolyForm Noncommercial 1.0.0](LICENSE). It permits the noncommercial and personal
+uses described in that license; **commercial use is not granted**. This is a source-available license, not an OSI
+open-source license. The license covers project code only. Dependencies, model weights, voices, fonts, music, sound
+effects, and generated story/media outputs have separate terms; consult their own licenses and the records in
+[`provenance/`](provenance/).
+
+## GitHub project metadata
+
+Suggested repository description: **A work-in-progress, local-first, human-reviewed AI video production workbench.**
+
+Suggested topics: `ai-video`, `local-first`, `remotion`, `ollama`, `video-production`, `human-in-the-loop`.
 
 ## 1. Set up (Windows, PowerShell)
+
+When the owner has made the repository public, clone it before running the setup commands:
+
+```powershell
+git clone https://github.com/Atik203/framesmith.git
+Set-Location framesmith
+```
 
 ```powershell
 py -3.11 -m venv .venv
@@ -18,14 +63,11 @@ python scripts/check_env.py
 python -m pytest -q
 ```
 
-Install what `check_env.py` reports as missing: Node LTS, FFmpeg, Git, and on Day 1 ComfyUI (portable build) and
-espeak-ng. Heavy audio packages are separate: `python -m pip install -r requirements-audio.txt`.
+Install what `check_env.py` reports as missing. Node and FFmpeg are needed for rendering; ComfyUI and espeak-ng are
+needed only for the corresponding local image/narration steps. Heavy audio packages are separate:
+`python -m pip install -r requirements-audio.txt`.
 
-```powershell
-git init -b main
-git add .
-git commit -m "Initial Framesmith scaffold"
-```
+For the Remotion renderer, install dependencies in `renderer/` with `npm ci`, then use `npm run lint` to run ESLint and TypeScript checks. Local media is ignored by Git.
 
 ### `.env`
 
@@ -62,6 +104,8 @@ One row per video per platform in `log.csv` (columns in blueprint R14). Record m
 
 ## 5. What is not built yet
 
-Narration (Kokoro), caption alignment, MP4 QA checks, the ComfyUI driver and the Remotion project come on Days 1–2;
-see `Roadmap.md`. `docs/renderer-setup.md` has the Remotion notes. The LLM provider code was tested against mocked
-HTTP, so the first live `generate.py` run on your keys is the real test; send me the error output if it fails.
+The local operator UI, resumable sequential workflow, image review flow, and full-motion video stage are not built.
+There is no selected or enabled image-to-video API. `lf-short-001` has a technically valid MP4, but it remains a
+draft: its scenes 6–8 use byte-identical images, and its pan/zoom motion did not meet the owner's quality bar. See
+[`Roadmap.md`](Roadmap.md) for the quality hold and build phases. [`docs/renderer-setup.md`](docs/renderer-setup.md)
+contains Remotion setup notes.

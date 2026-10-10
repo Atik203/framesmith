@@ -2,6 +2,11 @@
 
 Source: blueprint Parts VIII, XV and XX, R5, R9. Update the blueprint first if this changes.
 
+The repository's PolyForm Noncommercial 1.0.0 license applies only to Framesmith project code. It is not a license
+for generated stories or media, third-party models/checkpoints, voices, fonts, music, sound effects, or dependencies.
+Check each item's own terms and record provenance separately. Do not assume that noncommercial project-code use
+permits commercial use of an output or a model.
+
 1. **Record before use.** Every model, checkpoint, LoRA, voice, font, music track and sound effect that ends up in
    a published video gets a row in `licenses.csv` *before* it is used: source URL, license name, whether
    commercial use is allowed, and the date checked.
