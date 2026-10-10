@@ -42,6 +42,7 @@ v1/published/*
 *.pt
 
 # Local model/tool installs
+.ollama/
 ComfyUI/
 ComfyUI_windows_portable/
 models/

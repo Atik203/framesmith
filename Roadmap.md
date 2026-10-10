@@ -39,7 +39,8 @@ Done when: one idea becomes one valid script JSON and one WAV.
 
 - [x] Node LTS, FFmpeg 9.0.2 and Git on PATH (`check_env.py` confirms) (2026-10-10)
 - [x] OpenRouter, local Ollama, and OpenAI (last fallback, existing credit only) configured in `.env` (2026-10-10)
-- [ ] Install Ollama, pull `qwen3.5:4b-q4_K_M`, and verify the local API/model response
+- [x] Install Ollama, pull `qwen3.5:4b-q4_K_M`, and verify local inference on the RTX 3060 (2026-10-10)
+- [x] Move the complete local repository to `G:\framesmith`; place Ollama models under ignored `.ollama\models` and remove old E:/C: copies after verification (2026-10-10)
 - [x] `python scripts/generate.py ideas --count 3` works through OpenRouter free model and writes valid JSON (2026-10-10)
 - [ ] **(you)** Edit the chosen premise yourself (R7), then `python scripts/generate.py script ...` gives a valid script
 - [ ] **(you)** Brand sheet: narrator voice (audition the Kokoro candidates), image checkpoint, caption font, one character, a second narrator style and a second visual treatment

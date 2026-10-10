@@ -2503,7 +2503,8 @@ analytics/metrics.md          # metric definitions
 - Current V1 order: OpenRouter free endpoint → local Ollama `qwen3.5:4b-q4_K_M` → OpenAI `gpt-6-luna` using only existing $5 credit. Gemini and OpenCode remain excluded. Ollama uses `FRAMESMITH_OLLAMA_URL` and requires no key.
 - Laptop has Ryzen 7 5800H, 32 GB RAM, RTX 3060 Laptop GPU with 6 GB VRAM. Use the ~3.3 GB Q4_K_M model and 8K context. Keep only one GPU-heavy model active; stop/unload ComfyUI image models before Ollama inference.
 - Model registry and API references checked 2026-10-10: https://registry.ollama.com/library/qwen3.5:4b-q4_K_M ; https://docs.ollama.com/api/chat ; Windows installer: https://ollama.com/download/windows . The model registry lists Apache 2.0 licensing.
-- Installation and local inference remain a Roadmap task until the laptop runtime and API are verified.
+- Installed Ollama 0.40.2 and pulled `qwen3.5:4b-q4_K_M`; a local JSON API smoke test passed and `ollama ps` reported 100% GPU at 8K context on the RTX 3060.
+- Repository moved from `E:\PROJECT\framesmith` to `G:\framesmith`, including Git history, `.env`, and local project files. Ollama model cache moved to `G:\framesmith\.ollama\models`; `OLLAMA_MODELS` is set at Windows user scope and `.ollama/` is Git-ignored. The G: checkout, provider call, API, and GPU placement were verified before deleting the E: duplicate and C: model cache.
 - llama.cpp: https://github.com/ggml-org/llama.cpp
 - LiteLLM: https://github.com/BerriAI/litellm
 - Temporal: https://docs.temporal.io/temporal

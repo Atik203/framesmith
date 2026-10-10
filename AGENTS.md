@@ -68,6 +68,7 @@ provenance/                       asset rights policy + licenses.csv
 comfyui/workflows/                saved ComfyUI workflow JSON (seed, checkpoint, license noted)
 renderer/                         Remotion project (created on Day 2; see docs/renderer-setup.md)
 v1/{ideas,scripts,assets,audio,subtitles,renders,published}   working data, media gitignored
+.ollama/models/                                              local Ollama model cache, gitignored
 notes/  docs/                     weekly reviews, setup notes
 ```
 
