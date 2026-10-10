@@ -4,8 +4,8 @@
 under active development: its current foundation is Python production scripts and a Remotion renderer. The planned
 operator UI, resumable sequential workflow, image review screens, and full-motion video stage are not complete.
 
-The audience-facing video brand is **Lanternfall**. **Framesmith** is the name of this software project and may be
-used on its source-code pages; it must not appear in Lanternfall videos or audience-facing brand materials.
+**Framesmith** is the project's only active identity. The current goal is the video-production workbench; a
+separate content business, audience brand, and publishing plan are not active.
 
 ## Planned workflow
 
@@ -16,7 +16,7 @@ used on its source-code pages; it must not appear in Lanternfall videos or audie
    FramePack ran too slowly and stressed the owner's 6 GB laptop GPU. A paid image-to-video API is an optional,
    cost-visible path, not yet selected or enabled.
 5. Assemble approved motion clips with narration and aligned captions, then run technical and visual QA.
-6. The owner reviews the final cut and publishes manually.
+6. Export the draft for owner review. Publishing integrations are outside the current project scope.
 
 The local UI and complete workflow are roadmap goals, not current capabilities. A pan/zoom treatment over still images
 is a draft/animatic and does not meet the project's full-motion quality bar. If no affordable, approved motion option
@@ -80,7 +80,7 @@ For the Remotion renderer, install dependencies in `renderer/` with `npm ci`, th
 Put the OpenRouter key in `.env` for free-first generation. Ollama runs locally as the second
 fallback; OpenAI `gpt-6-luna` is last and limited to the existing $5 credit. Do not enable auto-recharge
 or add credit. Model defaults are shown in `.env.example` and configured in `.env`; recheck free availability before generation.
-`FRAMESMITH_PUBLISHING_ENABLED` stays `false` in V1 (publishing is manual).
+`FRAMESMITH_PUBLISHING_ENABLED` stays `false`; publishing is outside the current project scope.
 
 ## 2. Daily commands
 
@@ -106,7 +106,7 @@ JSON and render specs are small text and are committed.
 
 One row per video per platform in `log.csv` (columns in blueprint R14). Record metrics at 24 h and 72 h, refresh
 `views_latest` weekly, and use only the structure, hook, narrator and visual values listed in
-`configs/brands/lanternfall.yaml`. Weekly 30-minute review: copy `notes/weekly-review.md` and run `review.py`.
+`configs/brands/framesmith.yaml`. Weekly 30-minute review: copy `notes/weekly-review.md` and run `review.py`.
 
 ## 5. What is not built yet
 
