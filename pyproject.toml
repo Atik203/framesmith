@@ -1,0 +1,13 @@
+# Tool configuration only. Framesmith V1 is plain scripts, not an installable package (blueprint R1).
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["renderer", "v1", "ComfyUI"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

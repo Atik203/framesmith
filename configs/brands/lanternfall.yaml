@@ -1,0 +1,114 @@
+# Lanternfall brand config (blueprint R13 and Part VI "Brand Configuration").
+# Public brand: Lanternfall. The internal codename must never appear in public output.
+# TODO items are Day 1 decisions (R11: "Fix the brand sheet"); change them here, not in code.
+
+brand_id: lanternfall
+name: Lanternfall
+internal_codename: framesmith   # internal only
+content_id_prefix: lf           # lf-short-001, lf-long-001 (blueprint R14)
+niche: ai_stories
+language: en
+audience: global_english        # approximately 18-34
+tone: [mysterious, emotional, cinematic, intelligent]
+
+handles:                        # R13: @lanternfall where free, else ONE variant on every platform
+  preferred: "@lanternfall"
+  chosen: null                  # TODO after owner checks; YouTube already has an empty "Lanternfall" channel
+  status: pending               # Instagram, Facebook Page, domain and trademark checks still pending
+
+formats:
+  short:
+    composition: ShortVertical
+    width: 1080
+    height: 1920
+    fps: 30
+    min_duration_seconds: 30
+    max_duration_seconds: 55
+    scenes: {min: 6, max: 10}
+  long_form:
+    composition: LongHorizontal
+    width: 1920
+    height: 1080
+    fps: 30
+    min_duration_seconds: 480
+    target_duration_seconds: {min: 600, max: 720}   # 10-12 min for story episodes; never pad
+    max_duration_seconds: 720
+    max_per_week: 1             # R12: cap at 1 per week, never more than 2
+    derivative_shorts: {min: 3, max: 8}
+
+variation_rules:                # R7: YouTube inauthentic-content policy
+  min_story_structures: 3
+  min_narrator_styles: 2
+  min_visual_treatments: 2
+  no_consecutive_same_structure: true
+
+story_structures:               # Vertical A formats; rotate, never two in a row
+  - psychological_twist
+  - mystery
+  - emotional_reveal
+  - speculative_what_if
+  - future_message
+  - time_travel_consequence
+
+hook_families:                  # log.csv `hook_family` values (Vertical A hook types)
+  - question
+  - contradiction
+  - impossible_event
+  - immediate_stakes
+
+narrator_styles:                # log.csv `narrator_style`; R7 needs at least 2 in use per week
+  - deep_neutral
+  # TODO Day 1-3: add a second style (for example warm_intimate) and A/B test it
+
+visual_treatments:              # log.csv `visual_treatment`; R7 needs at least 2 in use per week
+  - cinematic_anime
+  # TODO Day 2-3: add a second (Vertical A lists stylized_3d and illustrated_realism)
+
+narration:
+  style: deep_neutral
+  engine: kokoro                # R5 default; A/B test qwen3_tts_0_6b
+  voice_id: null                # TODO Day 1: pick one stable narrator voice
+  voice_candidates: [am_michael, bm_george, am_adam]   # Kokoro voice names to audition by ear; confirm in the Kokoro voice list
+  sample_rate: 24000
+  rate: 0.97
+  pronunciation:
+    AI: "A-I"
+    GPU: "G-P-U"
+
+visual:
+  style: cinematic_anime
+  checkpoint: null              # TODO Day 1: SDXL-family anime (Illustrious or NoobAI); log license in provenance/licenses.csv
+  long_form_still_size: "1344x768"   # keep the subject in the center third so Shorts can be cropped
+  constraints: "No logos, no text, no copyrighted characters, no watermarks, no extra limbs, no malformed hands."
+
+character_identity:             # one compact identity block per recurring character (reused in every scene prompt)
+  - id: char-001
+    name: null                  # TODO Day 1
+    age_range: null
+    hair: null
+    face_shape: null
+    clothing: null
+    palette: null
+    distinguishing_props: null
+
+captions:
+  preset: kinetic_white
+  font_family: null             # TODO one font family across the channel
+  words_per_chunk: {min: 1, max: 7}
+  note: Inside the platform safe zone, high contrast, avoid covering faces.
+
+cta_policy: soft
+watermark: none
+
+forbidden_topics:
+  - graphic violence
+  - sexual content
+  - hate or targeting of protected groups
+  - political persuasion (not at launch)
+  - copyrighted franchise characters
+
+rules:
+  no_fake_true_story_framing: true
+  no_ai_persona_advice: true    # no finance, medical or legal advice from an AI persona
+  use_synthetic_media_disclosure: true
+  human_pass_required: true     # every script and final cut

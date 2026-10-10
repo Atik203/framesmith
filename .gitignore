@@ -1,0 +1,53 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / Remotion
+node_modules/
+renderer/out/
+renderer/build/
+renderer/.cache/
+
+# Working data: keep folders (.gitkeep) and small text files, ignore media
+v1/assets/*
+v1/audio/*
+v1/renders/*
+v1/published/*
+!v1/**/.gitkeep
+!v1/renders/*.spec.json
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.flac
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.safetensors
+*.ckpt
+*.gguf
+*.onnx
+*.pt
+
+# Local model/tool installs
+ComfyUI/
+ComfyUI_windows_portable/
+models/
+.cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

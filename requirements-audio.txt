@@ -1,0 +1,7 @@
+# Narration and caption timing (Day 1-2). Large downloads; install when you reach those steps.
+# Kokoro also needs the espeak-ng system package. Follow each project's README for exact steps.
+kokoro
+soundfile
+# Forced alignment of the known script to the audio (R5). Use one of the two:
+faster-whisper
+# whisperx

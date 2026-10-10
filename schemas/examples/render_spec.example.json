@@ -1,0 +1,21 @@
+{
+  "content_id": "lf-short-example",
+  "content_type": "short",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "duration_seconds": 38,
+  "scenes": [
+    { "asset": "assets/lf-short-example/scene-01.png", "start": 0, "duration": 3.5, "motion": "push_in" },
+    { "asset": "assets/lf-short-example/scene-02.png", "start": 3.5, "duration": 6, "motion": "pan_left" },
+    { "asset": "assets/lf-short-example/scene-03.png", "start": 9.5, "duration": 5.5, "motion": "push_out" },
+    { "asset": "assets/lf-short-example/scene-04.png", "start": 15, "duration": 6.5, "motion": "pan_right" },
+    { "asset": "assets/lf-short-example/scene-05.png", "start": 21.5, "duration": 5.5, "motion": "parallax" },
+    { "asset": "assets/lf-short-example/scene-06.png", "start": 27, "duration": 6, "motion": "push_in" },
+    { "asset": "assets/lf-short-example/scene-07.png", "start": 33, "duration": 5, "motion": "focus_pull" }
+  ],
+  "voice": "audio/lf-short-example.wav",
+  "subtitles": "subtitles/lf-short-example.json",
+  "music": null,
+  "sfx": []
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "framesmith/idea.schema.json",
+  "title": "Story idea batch",
+  "description": "Output of the StoryIdeaAgent (prompts/niches/ai_stories/story_idea_v1.md). Scores are integers 1-5: for visual_potential and novelty 5 is best; for production_difficulty and policy_risk 5 is worst.",
+  "type": "object",
+  "required": ["ideas"],
+  "additionalProperties": false,
+  "properties": {
+    "ideas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "title",
+          "one_sentence_premise",
+          "hook",
+          "twist",
+          "visual_potential",
+          "novelty",
+          "production_difficulty",
+          "policy_risk"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string", "minLength": 3 },
+          "one_sentence_premise": { "type": "string", "minLength": 10 },
+          "hook": { "type": "string", "minLength": 5 },
+          "twist": { "type": "string", "minLength": 5 },
+          "visual_potential": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "novelty": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "production_difficulty": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "policy_risk": { "type": "integer", "minimum": 1, "maximum": 5 }
+        }
+      }
+    }
+  }
+}
