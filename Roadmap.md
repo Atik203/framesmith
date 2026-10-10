@@ -10,7 +10,7 @@ do it. Tick a box only when its "done when" is true and add the date. Run `pytho
 ## Next actions (in order)
 
 1. **(you)** `git init`, first commit, Python venv, `python scripts/check_env.py` until no `[FAIL]`.
-2. **(you)** Get a Gemini AI Studio key and one backup key (Groq or OpenRouter); put keys and model names in `.env`.
+2. **(done 2026-10-10)** Configured Gemini and OpenRouter free-tier keys plus OpenAI as the last fallback using only the existing $5 credit; `.env` has the active provider order.
 3. **(you)** Run `python scripts/generate.py ideas` for real and pick one premise (first live test of the providers).
 4. **(you)** Install ComfyUI and Kokoro; fill the brand TODOs in `configs/brands/lanternfall.yaml`.
 5. **(you)** Do the free platform setup in the R9 track below; it takes a month for AdSense review, so start early.
@@ -30,15 +30,15 @@ do it. Tick a box only when its "done when" is true and add the date. Run `pytho
 - [x] Tests and lint pass (`pytest`, `ruff`); provider calls tested against mocked HTTP only (2026-10-10)
 - [x] `Roadmap.md` (2026-10-10)
 - [ ] **(you)** `git init -b main`, first commit, optional private remote
-- [ ] **(you)** Python 3.11+ venv, `pip install -r requirements.txt -r requirements-dev.txt`
+- [x] Python 3.11+ venv and project/dev requirements installed (2026-10-10)
 - [ ] **(you)** `python scripts/check_env.py` shows no `[FAIL]` (needs your `.env`)
 
 ## Phase 1 — Day 1: setup, script, voice (R11)
 
 Done when: one idea becomes one valid script JSON and one WAV.
 
-- [ ] **(you)** Node LTS, FFmpeg and Git on PATH (`check_env.py` confirms)
-- [ ] **(you)** Gemini key plus a backup key in `.env`, with model names copied from each provider's console
+- [x] Node LTS, FFmpeg 9.0.2 and Git on PATH (`check_env.py` confirms) (2026-10-10)
+- [x] Gemini and OpenRouter free-tier keys plus OpenAI last-fallback key in `.env`; selected model IDs are in `.env.example` (existing OpenAI credit only) (2026-10-10)
 - [ ] **(you)** `python scripts/generate.py ideas` works live and writes `v1/ideas/ideas-*.json`
 - [ ] **(you)** Edit the chosen premise yourself (R7), then `python scripts/generate.py script ...` gives a valid script
 - [ ] **(you)** Brand sheet: narrator voice (audition the Kokoro candidates), image checkpoint, caption font, one character, a second narrator style and a second visual treatment

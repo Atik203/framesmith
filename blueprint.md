@@ -55,7 +55,7 @@ Conclusion: platform ad payouts are a slow lane. The $500/month gate is reachabl
 ### R5. V1 zero-cost stack (supersedes "V1 Model Choices")
 | Function | Choice | Cost | Notes |
 | --- | --- | --- | --- |
-| Ideas and scripts | Free-tier cloud LLM (Google AI Studio Gemini Flash-class, Groq, Mistral free mode, OpenRouter `:free` models) | $0 | Limits are shown only in each console and change often; write retries and a second provider. Local Qwen via Ollama is the fallback, not the default: script quality is the product. |
+| Ideas and scripts | Gemini `gemini-3.8-flash` and OpenRouter `qwen/qwen3.8-27b:free` first; OpenAI `gpt-6-luna` third and last | $0 while a free provider succeeds; existing $5 OpenAI API credit only if both free providers fail | No Groq in the active V1 chain. Do not auto-recharge or add credit. Set a $5 OpenAI project spend limit. Models and free quotas change; recheck before use. Ollama remains an optional manual fallback. |
 | Images | ComfyUI (v0.18+ has Dynamic VRAM by default) with an SDXL-family anime checkpoint (Illustrious or NoobAI) as the default; test Z-Image Turbo and FLUX.2 Klein 4B GGUF Q4 | $0 | One image at a time on 6 GB. Verify each checkpoint's commercial license and store it in the asset log. Gemini image free quotas are inconsistent across sources; treat as a bonus only. |
 | Narration | Kokoro-82M (Apache-2.0, about 300 MB, real-time on CPU) | $0 | Keeps the GPU free for images. A/B test Qwen3-TTS 0.6B (Apache-2.0 upstream; a community server reports about 4 GB VRAM in use). Skip the 1.7B model. |
 | Caption timing | Forced alignment of the known script to the audio (WhisperX or faster-whisper word timestamps) | $0 | Do not re-transcribe text you already have. |
@@ -122,7 +122,7 @@ Scope rule: if a step slips by more than half a day, cut scope rather than exten
 - [ ] Install Python 3.11+, Node LTS, FFmpeg, Git. Confirm each with `--version`.
 - [ ] Install ComfyUI (Windows portable build) and generate one SDXL-family anime image. Save the workflow JSON.
 - [ ] Install Kokoro (`pip install kokoro soundfile`, plus espeak-ng) and render one test sentence to a 24 kHz WAV.
-- [ ] Get a Gemini AI Studio key and a second free-tier key (Groq or OpenRouter) as backup. Store both in `.env`, never in git.
+- [ ] Configure Gemini and OpenRouter free-tier keys first, with OpenAI `gpt-6-luna` as the third fallback using only the existing $5 credit. Store keys in `.env`, never in git. Do not activate Groq.
 - [ ] Write one script: idea JSON, then timed script JSON (Part IV schema), with schema validation, 3 retries, and provider fallback.
 - [ ] Fix the brand sheet: name, narrator voice, visual style, one character identity block.
 - [ ] Done when: one idea becomes one valid script JSON and one WAV.
@@ -249,7 +249,7 @@ Building the repo scaffold turned several open details into decisions. They bind
 | Agent entry points | `AGENTS.md` (rules for coding agents), `CLAUDE.md` (imports AGENTS.md) and `Roadmap.md` (checkbox progress tracker; tick a box and add the date in the same change that finishes the task). |
 | Content IDs | `lf-short-001`, `lf-long-001`, and so on. Derivative Shorts set `parent_content_id` to the long-form episode. Pattern `^[a-z0-9][a-z0-9-]{2,40}$`. |
 | Schemas | `schemas/{idea,script,render_spec}.schema.json` are strict (`additionalProperties: false`) so model drift fails validation and triggers a retry. Idea scores are integers 1–5: 5 is best for `visual_potential` and `novelty`; 5 is worst for `production_difficulty` and `policy_risk`. |
-| LLM calls | Providers in `FRAMESMITH_LLM_PROVIDERS` order (default gemini, groq, openrouter, ollama). Up to `FRAMESMITH_LLM_MAX_RETRIES` (3) attempts per provider; invalid output is fed back to the model; then the next provider. Model names are not pinned in the repo because they change often: set them in `.env` and record them per video. Code, not the model, sets `content_id`, `niche`, `language`, `content_type`, segment `index` and `estimated_duration_seconds`. |
+| LLM calls | Providers in `FRAMESMITH_LLM_PROVIDERS` order (default gemini, openrouter, openai). Gemini and OpenRouter are the free attempts; OpenAI is the paid final fallback and may spend only the existing $5 credit. Up to `FRAMESMITH_LLM_MAX_RETRIES` (3) attempts per provider; invalid output is fed back to the model; then the next provider. Model names are configured in `.env` and recorded per video. Code sets `content_id`, `niche`, `language`, `content_type`, segment `index` and `estimated_duration_seconds`. |
 | Prompts | `prompts/niches/ai_stories/*_v1.md`; the `id` in each file's front matter is the prompt version. `scripts/generate.py` writes `{content_id}.meta.json` next to each script with provider, model, prompt id and story structure. |
 | Render spec | Paths are relative to `v1/`: `assets/{id}/scene-01.png`, `audio/{id}.wav`, `subtitles/{id}.json` (Remotion draws the captions; `.ass` only for the FFmpeg-only fallback). Specs are saved as `v1/renders/{id}.spec.json` and committed, so a render can be reproduced. Shorts are 1080x1920, long-form 1920x1080, both 30 fps. |
 | Tracking log | `log.csv` columns: `content_id, content_type, parent_content_id, title, date, platform, url, story_structure, hook_family, narrator_style, visual_treatment, duration_seconds, script_version, model_names, active_minutes, cost_usd, human_pass, disclosure, views_24h, views_72h, views_latest, viewed_vs_swiped, avg_pct_viewed, followers_gained, ctr, first30_retention, avg_view_duration_s, notes`. Repeat the production fields on every platform row of a video. `scripts/review.py` takes the maximum of `active_minutes` and `cost_usd`, sums views and averages percentages per video. |
@@ -2466,10 +2466,16 @@ analytics/metrics.md          # metric definitions
 - Short render specs must contain 6–10 scenes at 30 fps, with scenes contiguous and covering the full duration. Invalid render specs fail validation.
 - R7 variation reporting counts only values in the Lanternfall brand lists and reports when the configured lists cannot meet the required variety.
 - Updated the V1 hardware record to the owner's Ryzen 7 5800H, 32 GB RAM and RTX 3060 6 GB laptop.
+- Selected Gemini `gemini-3.8-flash` and OpenRouter `qwen/qwen3.8-27b:free` as the free-first provider chain, with OpenAI `gpt-6-luna` as a third fallback limited to the already available $5 credit. Removed Groq from active V1 configuration; no additional credit or paid service is authorized.
 ```
 # Part XXXVII — Current Tool References
 ## Official References
-- OpenAI GPT-5.6 Luna: https://developers.openai.com/api/docs/models/gpt-5.6-luna
+- Gemini 3.8 Flash: https://ai.google.dev/gemini-api/docs/models
+- Gemini API pricing and free-tier details: https://ai.google.dev/gemini-api/docs/pricing
+- OpenRouter Qwen 3.8 27B free model: https://openrouter.ai/qwen/qwen3.8-27b:free
+- OpenAI GPT-6 Luna: https://developers.openai.com/api/docs/models/gpt-6-luna
+- OpenAI API pricing: https://developers.openai.com/api/docs/pricing
+- OpenAI GPT-5.6 Luna (historical reference): https://developers.openai.com/api/docs/models/gpt-5.6-luna
 - OpenAI GPT-5.6 Terra: https://developers.openai.com/api/docs/models/gpt-5.6-terra
 - OpenAI GPT-5.6 Sol: https://developers.openai.com/api/docs/models/gpt-5.6-sol
 - OpenAI model list: https://developers.openai.com/api/docs/models/all

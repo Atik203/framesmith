@@ -29,9 +29,10 @@ git commit -m "Initial Framesmith scaffold"
 
 ### `.env`
 
-Put a Gemini AI Studio key and a backup key (Groq or OpenRouter) in `.env`, and fill the matching
-`FRAMESMITH_<PROVIDER>_MODEL` lines from each provider's console. Model names are blank on purpose: free-tier
-names and limits change often. `FRAMESMITH_PUBLISHING_ENABLED` stays `false` in V1 (publishing is manual).
+Put Gemini and OpenRouter keys in `.env` for free-first generation. OpenAI `gpt-6-luna` is the paid final
+fallback and must use only the existing $5 credit; do not enable auto-recharge or add credit. Groq is not
+used. Model defaults are shown in `.env.example` and configured in `.env`; recheck free availability before generation.
+`FRAMESMITH_PUBLISHING_ENABLED` stays `false` in V1 (publishing is manual).
 
 ## 2. Daily commands
 

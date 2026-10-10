@@ -5,13 +5,16 @@ import llm
 import pytest
 
 KEY_A = "key-gemini-123456"
-KEY_B = "key-groq-654321"
+KEY_B = "key-openrouter-654321"
+KEY_C = "key-openai-abcdef"
 ENV = {
-    "FRAMESMITH_LLM_PROVIDERS": "gemini,groq",
+    "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
     "FRAMESMITH_GEMINI_API_KEY": KEY_A,
     "FRAMESMITH_GEMINI_MODEL": "gem-model",
-    "FRAMESMITH_GROQ_API_KEY": KEY_B,
-    "FRAMESMITH_GROQ_MODEL": "groq-model",
+    "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,
+    "FRAMESMITH_OPENROUTER_MODEL": "qwen/qwen3.8-27b:free",
+    "FRAMESMITH_OPENAI_API_KEY": KEY_C,
+    "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",
 }
 
 
@@ -67,18 +70,18 @@ def test_gemini_key_goes_in_header_not_url():
 
 
 def test_falls_back_after_retryable_errors():
-    calls = {"gemini": 0, "groq": 0}
+    calls = {"gemini": 0, "openrouter": 0}
 
     def handler(request):
         if request.url.host.startswith("generativelanguage"):
             calls["gemini"] += 1
             return httpx.Response(503, text="overloaded")
-        calls["groq"] += 1
+        calls["openrouter"] += 1
         return openai_reply('{"ok": true}')
 
     result, sleeps = run(handler)
-    assert result.provider == "groq"
-    assert calls == {"gemini": 3, "groq": 1}  # 3 attempts, then fallback
+    assert result.provider == "openrouter"
+    assert calls == {"gemini": 3, "openrouter": 1}  # 3 attempts, then fallback
     assert len(sleeps) == 2  # backoff between the 3 attempts, none after the last
 
 
@@ -92,7 +95,7 @@ def test_non_retryable_status_skips_straight_to_next_provider():
         return openai_reply('{"ok": true}')
 
     result, sleeps = run(handler)
-    assert result.provider == "groq" and calls["gemini"] == 1 and sleeps == []
+    assert result.provider == "openrouter" and calls["gemini"] == 1 and sleeps == []
 
 
 def test_invalid_output_is_fed_back_and_retried():
@@ -121,7 +124,7 @@ def test_schema_style_rejection_is_fed_back():
     assert "field 'ok' must be true" in bodies[1]["contents"][0]["parts"][0]["text"]
 
 
-def test_groq_uses_json_mode_and_bearer_header():
+def test_openrouter_uses_bearer_header():
     seen = {}
 
     def handler(request):
@@ -129,11 +132,31 @@ def test_groq_uses_json_mode_and_bearer_header():
         seen["body"] = json.loads(request.content)
         return openai_reply('{"ok": true}')
 
-    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "groq"}
+    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "openrouter"}
     result, _ = run(handler, env)
-    assert result.provider == "groq"
+    assert result.provider == "openrouter"
     assert seen["auth"] == f"Bearer {KEY_B}"
+    assert "qwen/qwen3.8-27b:free" == seen["body"]["model"]
+
+
+def test_openai_uses_chat_completions_json_mode_and_bearer_header():
+    seen = {}
+
+    def handler(request):
+        seen["url"] = str(request.url)
+        seen["auth"] = request.headers.get("authorization")
+        seen["body"] = json.loads(request.content)
+        return openai_reply('{"ok": true}')
+
+    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "openai"}
+    result, _ = run(handler, env)
+    assert result.provider == "openai" and result.model == "gpt-6-luna"
+    assert seen["url"] == "https://api.openai.com/v1/chat/completions"
+    assert seen["auth"] == f"Bearer {KEY_C}"
+    assert seen["body"]["model"] == "gpt-6-luna"
     assert seen["body"]["response_format"] == {"type": "json_object"}
+    assert seen["body"]["reasoning_effort"] == "none"
+    assert seen["body"]["temperature"] == 0.9
 
 
 def test_ollama_uses_native_chat_endpoint():
@@ -153,26 +176,25 @@ def test_ollama_uses_native_chat_endpoint():
 
 def test_total_failure_message_never_contains_keys():
     def handler(request):
-        return httpx.Response(500, text=f"boom {KEY_A} {KEY_B}")
+        return httpx.Response(500, text=f"boom {KEY_A} {KEY_B} {KEY_C}")
 
     with pytest.raises(llm.LLMError) as caught:
         run(handler)
     message = str(caught.value)
     assert "all providers failed" in message
-    assert KEY_A not in message and KEY_B not in message
+    assert KEY_A not in message and KEY_B not in message and KEY_C not in message
 
 
 def test_provider_without_model_or_key_is_skipped():
     env = {
-        "FRAMESMITH_LLM_PROVIDERS": "gemini,groq,openrouter",
+        "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
         "FRAMESMITH_GEMINI_API_KEY": KEY_A,  # no model
-        "FRAMESMITH_GROQ_MODEL": "groq-model",  # no key
-        "FRAMESMITH_OPENROUTER_API_KEY": "k",
-        "FRAMESMITH_OPENROUTER_MODEL": "free-model",
+        "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,  # no model
+        "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",  # no key
     }
     providers, skipped = llm.configured_providers(env)
-    assert [p.name for p in providers] == ["openrouter"]
-    assert len(skipped) == 2
+    assert providers == []
+    assert len(skipped) == 3
 
 
 def test_no_usable_provider_raises_clear_error():
@@ -200,4 +222,4 @@ def test_network_error_is_retried_then_falls_back():
         return openai_reply('{"ok": true}')
 
     result, sleeps = run(handler)
-    assert result.provider == "groq" and len(sleeps) == 2
+    assert result.provider == "openrouter" and len(sleeps) == 2

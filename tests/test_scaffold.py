@@ -250,12 +250,13 @@ def test_provider_status_reports_each_state():
     env = {
         "FRAMESMITH_GEMINI_API_KEY": "a",
         "FRAMESMITH_GEMINI_MODEL": "m",
-        "FRAMESMITH_GROQ_API_KEY": "b",
+        "FRAMESMITH_OPENAI_API_KEY": "b",
+        "FRAMESMITH_OPENAI_MODEL": "m",
         "FRAMESMITH_OPENROUTER_MODEL": "m",
     }
     states = {msg.split(":")[0]: status for status, msg in check_env.provider_status(env)}
     assert states["llm gemini"] == "OK"
-    assert states["llm groq"] == "WARN"  # key without model
+    assert states["llm openai"] == "OK"
     assert states["llm openrouter"] == "WARN"  # model without key
     assert states["llm ollama"] == "OPT"
 

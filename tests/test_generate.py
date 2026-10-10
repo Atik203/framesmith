@@ -9,7 +9,7 @@ import validate
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "schemas" / "examples"
-KEY = "key-groq-abcdef"
+KEY = "key-openrouter-abcdef"
 
 
 def example(kind):
@@ -18,9 +18,9 @@ def example(kind):
 
 def env_for(tmp_path, **extra):
     return {
-        "FRAMESMITH_LLM_PROVIDERS": "groq",
-        "FRAMESMITH_GROQ_API_KEY": KEY,
-        "FRAMESMITH_GROQ_MODEL": "m-test",
+        "FRAMESMITH_LLM_PROVIDERS": "openrouter",
+        "FRAMESMITH_OPENROUTER_API_KEY": KEY,
+        "FRAMESMITH_OPENROUTER_MODEL": "qwen/qwen3.8-27b:free",
         "FRAMESMITH_DATA_DIR": str(tmp_path / "v1"),
         **extra,
     }
@@ -56,7 +56,7 @@ def test_ideas_are_written_with_meta(tmp_path, capsys):
     assert len(files) == 1
     assert validate.validate("idea", json.loads(files[0].read_text(encoding="utf-8")))[0] == []
     meta = json.loads(files[0].with_name(files[0].stem + ".meta.json").read_text(encoding="utf-8"))
-    assert meta["provider"] == "groq" and meta["prompt_id"] == "story_idea_v1"
+    assert meta["provider"] == "openrouter" and meta["prompt_id"] == "story_idea_v1"
     assert "The Forgotten Neighbor" in capsys.readouterr().out
 
 
