@@ -1,9 +1,9 @@
-# Roadmap — Framesmith / Lanternfall
+# Roadmap — Framesmith
 
-Plan: [`blueprint.md`](blueprint.md), Revision 1.3 / R15 · Last updated: 2026-10-10
+Plan: [`blueprint.md`](blueprint.md), Revision 1.5 / R16 · Last updated: 2026-10-10
 Project status: **production scripts and Remotion renderer exist; the operator UI and full-motion generation path do not.**
 
-This roadmap tracks software work and content readiness separately. A generated or technically valid MP4 is not automatically a quality-approved or published reel. Tick a checkbox only when its stated evidence exists; add the completion date in the same change.
+This roadmap tracks software work and production readiness. A generated or technically valid MP4 is not automatically a quality-approved output. Tick a checkbox only when its stated evidence exists; add the completion date in the same change.
 
 ## Current verified state
 
@@ -24,7 +24,7 @@ The final `lf-short-001` script was manually tightened after the local model pro
 - Keep the owner in control: select ideas; edit/approve the script; review/accept images; explicitly click to start any paid motion generation; review the finished cut.
 - Paid generation stays off by default. Before an API request, show provider, duration, resolution, per-shot estimate, retry exposure, and cumulative project spend. Require explicit owner approval and an owner-set cap. Recheck live prices/terms before use.
 - Still-image pans/zooms may be used as a preview or clearly labeled fallback. They do not count as full-motion generation for the owner's stated quality bar.
-- No automated upload or publishing. No secrets, generated media, model weights, or large binaries in Git.
+- No upload or publishing workflow is in the current scope. No secrets, generated media, model weights, or large binaries in Git.
 - Code license: PolyForm Noncommercial 1.0.0. Generated media and third-party assets are governed by their own terms.
 
 ## Phase 0 — Public source-project readiness
@@ -34,6 +34,7 @@ Done when the source repository explains its scope and current limits, a code li
 - [x] Add project overview, planned workflow, current limitations, noncommercial code-license notice, and suggested GitHub description/topics to `README.md` (2026-10-10).
 - [x] Add PolyForm Noncommercial 1.0.0 for project code only (2026-10-10).
 - [x] Update blueprint and agent instructions to match the phased workbench plan (2026-10-10).
+- [x] Make Framesmith the sole current project identity; rename the production profile and use `fs-*` for new IDs while preserving existing `lf-*` records (2026-10-10).
 - [x] Add GitHub contribution, security, conduct, issue, and pull request guidance (2026-10-10).
 - [ ] Verify the GitHub About description/topics are set; the current `gh` authentication token is invalid, so repository metadata could not be checked or changed from this session.
 - [ ] Owner reviews repository contents/history and changes GitHub visibility to public when ready. Visibility stays owner-controlled.
@@ -87,15 +88,9 @@ Done when at least one selected approach has been tested on this machine or by a
 - [ ] Run ffprobe checks for codec, 1080×1920 dimensions, 30 fps, audio stream, duration, and expected output file.
 - [ ] Decode the full MP4 and inspect representative frames for missing assets, black frames, repeated scenes, visual continuity, and caption clipping.
 - [ ] Present the final render to the owner for a human pass; keep that approval distinct from automated QA.
-- [ ] Keep publishing manual and record the owner's review/publication status in `log.csv`.
+- [ ] Record technical QA and owner review in the production log.
 
-## Later business experiments
-
-The following remain governed by the audience/revenue gates in `blueprint.md` and are not prerequisites for building the local workbench:
-
-- [ ] Publish manually and measure real retention, completion, shares, and production time.
-- [ ] Consider the manual long-form pilot only after its prerequisites are met.
-- [ ] Revisit paid narration, API spend, analytics ingestion, platform integrations, and multi-brand expansion only after the appropriate owner-approved business gate.
+Publishing, channel operations, and content monetization are outside the current project scope.
 
 ## GitHub project metadata
 

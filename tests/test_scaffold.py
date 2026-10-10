@@ -10,7 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "schemas" / "examples"
-BRAND = ROOT / "configs" / "brands" / "lanternfall.yaml"
+BRAND = ROOT / "configs" / "brands" / "framesmith.yaml"
 
 
 def load_example(kind: str) -> dict:
@@ -152,11 +152,11 @@ def test_log_csv_header_matches_columns():
         assert next(csv.reader(handle)) == common.LOG_COLUMNS
 
 
-def test_brand_config_is_lanternfall():
+def test_brand_config_is_framesmith():
     config = load_brand()
-    assert config["brand_id"] == "lanternfall"
-    assert config["name"] == "Lanternfall"
-    assert config["content_id_prefix"] == "lf"
+    assert config["brand_id"] == "framesmith"
+    assert config["name"] == "Framesmith"
+    assert config["content_id_prefix"] == "fs"
     short, long_form = config["formats"]["short"], config["formats"]["long_form"]
     assert (short["width"], short["height"]) == (1080, 1920)
     assert (long_form["width"], long_form["height"]) == (1920, 1080)
@@ -170,9 +170,11 @@ def test_brand_lists_exist_for_variation_rules():
         assert config[key], key
 
 
-def test_codename_not_in_public_brand_fields():
-    public = {k: v for k, v in load_brand().items() if k != "internal_codename"}
-    assert "framesmith" not in json.dumps(public).lower()
+def test_brand_identity_is_used_for_production_profile():
+    config = load_brand()
+    assert config["brand_id"] == "framesmith"
+    assert config["name"] == "Framesmith"
+    assert "internal_codename" not in config
 
 
 def test_env_example_uses_prefix_and_has_no_secrets():
@@ -228,7 +230,7 @@ def test_blueprint_known_conflicts_stay_fixed():
         "tts_engine: qwen3_tts",
     ):
         assert stale not in text, stale
-    for required in ("### R13.", "### R14.", "Revision 1.3, repo scaffold", "Lanternfall"):
+    for required in ("### R13.", "### R14.", "Revision 1.3, repo scaffold", "Framesmith"):
         assert required in text, required
 
 

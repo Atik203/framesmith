@@ -1,25 +1,25 @@
-# AGENTS.md — Framesmith (audience-facing brand: Lanternfall)
+# AGENTS.md — Framesmith
 
 Instructions for AI coding and content agents (Claude Code, Codex, Cursor, etc.) working in this repo.
 Humans: start with `README.md`. Progress lives in `Roadmap.md`.
 
 ## What this project is
 
-A local-first project for an AI-assisted English-language video business: short-form (Shorts/Reels/TikTok) plus
-8–12 minute YouTube long-form. First vertical: **original AI cinematic stories**.
+A local-first workbench for developing original video projects. Its current foundation is Python scripts and a
+Remotion renderer; the operator UI and full-motion generation path are still planned.
 
-- Audience-facing brand: **Lanternfall**. Software project/repo name: **Framesmith**.
-  Framesmith may appear on software repository pages; never put it in a Lanternfall video, caption,
-  title, description, handle or other audience-facing brand page.
+- Active project and production identity: **Framesmith**. No separate content business or audience brand is
+  currently planned.
 - Owner: Atikur, solo operator, Dhaka. Machine: Lenovo Legion 5 laptop, AMD Ryzen 7 5800H, **32 GB RAM**, RTX 3060 **6 GB**.
-- Lanternfall business order: publish videos -> learn what earns -> earn -> automate content work. The owner has
-  separately authorized phased development of the Framesmith local workbench under R15.
+- The owner authorized phased development of the local workbench under R15. Publishing and monetization are not
+  current project goals.
 
 ## Source of truth and progress
 
-- `blueprint.md` is the single source of truth. **Revision 1.3 / R15 updates the software build direction
-  and repo identity/license; R1–R14 still govern content, provenance, spend, and manual publishing unless
-  R15 explicitly supersedes them.** Older text under superseded banners is historical reference.
+- `blueprint.md` is the single source of truth. **Revision 1.5 / R16 defines Framesmith as the sole active
+  identity and supersedes old business/brand planning. R15 defines the phased workbench direction.** Older
+  business and publishing plans are historical reference, not current instructions. Apply content and
+  provenance rules when producing or reviewing video assets.
 - If a decision conflicts with the blueprint, update `blueprint.md` first (add a change-log entry in
   Part XXXVI), then implement. Do not leave decisions only in chat, code comments or commit messages.
 - `Roadmap.md` is the checkbox tracker. When you finish a task, tick its box and add the date in the same
@@ -36,11 +36,10 @@ A local-first project for an AI-assisted English-language video business: short-
 - Local video generation is not the default: the owner reports FramePack stresses the 6 GB laptop GPU and
   takes too long. Image-to-video APIs are optional, cost-visible, per-run approved, and disabled until the
   owner authorizes a budget. Still-image motion is not full-motion video.
-- Do not add platform publishing adapters or unattended uploads. Publishing remains manual.
+- Do not add platform publishing adapters or uploads; publishing is outside the current project scope.
 - Budget remains $0 by default and retains the existing $20 hard cap for the first 60 days. Never add a paid
   service, paid API key or subscription without the owner saying so.
-- Gates A and B apply to publishing/business experiments, not to development of the workbench itself.
-- Long-form (V1.5) remains a manual content pilot, not a reason to add publishing automation.
+- Business gates and channel operations are not part of the current workbench plan.
 ## V1 stack (blueprint R5)
 
 | Function | Choice |
@@ -52,7 +51,7 @@ A local-first project for an AI-assisted English-language video business: short-
 | Render | Remotion + FFmpeg. Compositions `ShortVertical` (1080x1920) and `LongHorizontal` (1920x1080), 30 fps. |
 | Music / SFX | Only assets with an explicit commercial license, recorded in `provenance/licenses.csv`. |
 | Tracking | `log.csv`, one row per video per platform (columns in blueprint R14). |
-| Publishing | Manual. Agents never publish or upload. |
+| Publishing | Outside current scope. Agents never publish or upload. |
 
 The planned operator workflow pauses for owner approval at idea selection, script approval, image review,
 paid video generation and final-cut review. Video generation never runs without an explicit click and budget
@@ -63,7 +62,7 @@ approval.
 ```text
 AGENTS.md  CLAUDE.md  README.md  Roadmap.md  blueprint.md
 .env.example  requirements*.txt  pyproject.toml  log.csv
-configs/brands/lanternfall.yaml   brand config: structures, hook families, narrator and visual lists
+configs/brands/framesmith.yaml   production profile: structures, hook families, narrator and visual lists
 schemas/                          JSON Schemas (strict) + examples: idea, script, render_spec
 prompts/niches/ai_stories/        versioned prompt files (story_idea_v1.md, story_writer_v1.md)
 scripts/                          plain Python scripts (no package), see Tools
@@ -76,8 +75,8 @@ v1/{ideas,scripts,assets,audio,subtitles,renders,published}   working data, medi
 notes/  docs/                     weekly reviews, setup notes
 ```
 
-Per-content files (`content_id` looks like `lf-short-001`, `lf-long-001`; derivative Shorts set
-`parent_content_id`): `v1/ideas/ideas-<time>.json`, `v1/scripts/{id}.json` (+ `{id}.meta.json` sidecar),
+Per-content files use new IDs such as `fs-short-001`, `fs-long-001`; existing `lf-*` IDs remain supported.
+Derivative Shorts set `parent_content_id`: `v1/ideas/ideas-<time>.json`, `v1/scripts/{id}.json` (+ `{id}.meta.json` sidecar),
 `v1/assets/{id}/scene-01.png`, `v1/audio/{id}.wav`, `v1/subtitles/{id}.json`,
 `v1/renders/{id}.spec.json` (committed) and `v1/renders/{id}.mp4` (ignored).
 Paths inside a render spec are relative to `v1/`.
@@ -111,7 +110,7 @@ full-motion video generation, operator UI/job queue, and long-form script genera
   commit keys. Send API keys in headers, never in URLs. Model names are not hard-coded: they go in `.env`.
 - Kill switches: `FRAMESMITH_PUBLISHING_ENABLED` (default `false`) and `FRAMESMITH_GENERATION_ENABLED`.
   Any script that generates calls `common.require_generation_enabled()` first.
-- `log.csv`: use only the values listed in `configs/brands/lanternfall.yaml` for `story_structure`,
+- `log.csv`: use only the values listed in `configs/brands/framesmith.yaml` for `story_structure`,
   `hook_family`, `narrator_style` and `visual_treatment`. Repeat production fields on each platform row.
 - GPU: one model loaded at a time. Narration runs on CPU. Do not suggest large local video models.
 - Keep it small. Prefer the smaller, manual option and say what you skipped.
@@ -128,7 +127,7 @@ full-motion video generation, operator UI/job queue, and long-form script genera
 - No AI persona giving finance, medical or legal advice. No graphic violence, sexual content or hate.
 - Use the platform's synthetic-media disclosure when content is realistic.
 - Long-form: do not pad to reach 10 minutes, no 20–40 second static holds, change the shot every 4–8 seconds.
-- Do not hide or delete published videos before the YouTube Partner Program application.
+- Do not add publishing or channel-management behavior; these remain outside the current project scope.
 
 ## Licensing and provenance
 
