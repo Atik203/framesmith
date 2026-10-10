@@ -111,6 +111,30 @@ def check_packages() -> None:
             report("OPT", f"python package {package} not installed (requirements-audio.txt)")
 
 
+def check_ollama() -> None:
+    """Report local Ollama runtime and whether the configured model is pulled."""
+    values = common.load_env()
+    base_url = values.get("FRAMESMITH_OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/")
+    model = values.get("FRAMESMITH_OLLAMA_MODEL", "").strip()
+    if shutil.which("ollama"):
+        report("OK", f"ollama: {run_version([shutil.which('ollama') or 'ollama', '--version'])}")
+    else:
+        report("OPT", "ollama CLI not found on PATH (install Ollama for local fallback)")
+    try:
+        with urllib.request.urlopen(f"{base_url}/api/tags", timeout=2) as response:
+            import json
+
+            models = json.load(response).get("models", [])
+    except (OSError, ValueError):
+        report("WARN", "ollama local API unavailable (start Ollama to use local fallback)")
+        return
+    report("OK", "ollama local API responding")
+    if any(item.get("name") == model or item.get("model") == model for item in models):
+        report("OK", f"ollama model pulled: {model}")
+    elif model:
+        report("WARN", f"ollama model not pulled: {model} (ollama pull {model})")
+
+
 def provider_status(values: dict[str, str]) -> list[tuple[str, str]]:
     """(status, message) per LLM provider, from .env values. Never includes key text."""
     results: list[tuple[str, str]] = []
@@ -119,7 +143,8 @@ def provider_status(values: dict[str, str]) -> list[tuple[str, str]]:
         key = values.get(f"{prefix}_API_KEY", "").strip()
         model = values.get(f"{prefix}_MODEL", "").strip()
         if name == "ollama":
-            results.append(("OK", "llm ollama: model set (local service is checked separately)") if model else ("OPT", "llm ollama: not configured"))
+            status = ("OK", "llm ollama: model set (local service is checked separately)")
+            results.append(status if model else ("OPT", "llm ollama: not configured"))
             continue
         if key and model:
             results.append(("OK", f"llm {name}: key and model set"))
@@ -195,6 +220,7 @@ def main() -> int:
         hint="NVIDIA driver",
     )
     check_packages()
+    check_ollama()
     check_env_file()
     check_layout()
     check_comfyui()

@@ -75,7 +75,7 @@ def test_non_retryable_status_skips_straight_to_next_provider():
             return httpx.Response(401, text="API key not valid")
         return openai_reply('{"ok": true}')
 
-    result, sleeps = run(handler)
+    result, sleeps = run(handler, {**ENV, "FRAMESMITH_LLM_PROVIDERS": "openrouter,openai"})
     assert result.provider == "openai" and calls["openrouter"] == 1 and sleeps == []
 
 

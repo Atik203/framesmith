@@ -80,7 +80,11 @@ def configured_providers(
         elif not model:
             skipped.append(f"{name}: no model name (set {prefix}_MODEL)")
         else:
-            base_url = env.get("FRAMESMITH_OLLAMA_URL", OLLAMA_URL).strip() if name == "ollama" else ""
+            base_url = (
+                env.get("FRAMESMITH_OLLAMA_URL", OLLAMA_URL).strip()
+                if name == "ollama"
+                else ""
+            )
             providers.append(Provider(name, model, key, base_url))
     return providers, skipped
 

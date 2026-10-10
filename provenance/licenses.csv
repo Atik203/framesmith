@@ -1,1 +1,2 @@
 asset_type,name,version,source_url,license,commercial_use,checked_on,used_in,notes
+LLM model,Qwen 3.5 4B Q4_K_M,qwen3.5:4b-q4_K_M,https://registry.ollama.com/library/qwen3.5%3A4b-q4_K_M,Apache-2.0,verify upstream terms before publishing generated output,2026-10-10,idea and script drafts,Selected local fallback; about 3.3 GB model download; not yet installed or used.
