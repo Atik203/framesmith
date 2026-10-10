@@ -1,30 +1,32 @@
 # Remotion renderer setup (Day 2)
 
-The `renderer/` folder does not exist yet on purpose: `create-video` wants to make it itself. Create it on Day 2
-(blueprint R11) so it is scaffolded with the current Remotion version:
+The Remotion project is scaffolded in `renderer/`. Its first composition is `ShortVertical` (1080x1920,
+30 fps), defined in `renderer/src/Composition.tsx`. It reads the render spec and subtitle JSON from the
+repo and loads media from Remotion's `public/` directory.
+
+Before rendering a content ID, stage copies of its scene PNGs and narration WAV under
+`renderer/public/{content_id}/`. Keep the originals in `v1/`; staged media and rendered MP4s are ignored
+by Git.
+
+For `lf-short-001`, from the repo root:
 
 ```powershell
-# from the repo root; follow Remotion's README if flags changed
-npx create-video@latest --yes --blank renderer
+New-Item -ItemType Directory -Force renderer/public/lf-short-001
+Copy-Item v1/assets/lf-short-001/scene-*.png renderer/public/lf-short-001/
+Copy-Item v1/audio/lf-short-001.wav renderer/public/lf-short-001/
 ```
 
-Render specs come from `python scripts/build_render_spec.py` and live in `v1/renders/{id}.spec.json`. Every path in
-a spec is relative to `v1/` (`assets/{id}/scene-01.png`, `audio/{id}.wav`, `subtitles/{id}.json`), so point
-Remotion's public directory at `../v1` (check Remotion's `--public-dir` option on Day 2) and load files with
-`staticFile(path)`.
+Then run from `renderer/`:
 
-Required compositions, both reading the render-spec JSON (`schemas/render_spec.schema.json`):
+```powershell
+npm run lint
+npx remotion render src/index.ts ShortVertical ../v1/renders/lf-short-001.mp4 --public-dir=public
+```
 
-| Composition | Size | When |
-| --- | --- | --- |
-| `ShortVertical` | 1080x1920, 30 fps | Day 2 |
-| `LongHorizontal` | 1920x1080, 30 fps | Week 1, before the long-form pilot |
+If Remotion's default browser is unavailable, pass an installed compatible Chromium executable with
+`--browser-executable`. The render should use H.264 video, AAC audio and `yuv420p`; verify the output with
+`ffprobe`, decode it with FFmpeg, and inspect representative frames before considering it ready for owner
+review.
 
-Components to build as needed: HookScene, CharacterScene, CaptionOverlay, ProgressBar, CTA, Background.
-Motion presets: push_in, push_out, pan_left, pan_right, parallax, micro_shake, focus_pull, cut_on_word.
-Final encode: H.264, AAC, yuv420p via FFmpeg. Run the Part IX technical checks before publishing.
-
-Licensing: Remotion is free for individuals and companies up to 3 people; a company license applies at 4+
-people or when sold as a product (R5). Add a row to `provenance/licenses.csv` for it.
-
-Fallback if Remotion slows you down before Gate A: burn ASS captions and motion with FFmpeg only.
+The `LongHorizontal` (1920x1080) composition remains a Week 1 task before the long-form pilot. Add a
+provenance row for any model, checkpoint, voice, font, music or SFX used in published work.

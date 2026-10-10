@@ -1,0 +1,11 @@
+{
+  "kind": "script",
+  "content_id": "lf-short-001",
+  "provider": "assistant-authored",
+  "model": "GPT-6",
+  "prompt_id": "story_writer_v1",
+  "story_structure": "mystery",
+  "source": "ideas-20261010-empty-platform.json#1; manually tightened after local model exceeded schema limits",
+  "attempts": 2,
+  "generated_at": "2026-10-10T13:54:52+00:00"
+}

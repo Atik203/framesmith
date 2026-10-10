@@ -158,6 +158,7 @@ def test_ollama_uses_local_chat_api_without_api_key():
     assert seen["body"]["model"] == "qwen3.5:4b-q4_K_M"
     assert seen["body"]["stream"] is False
     assert seen["body"]["format"] == "json"
+    assert seen["body"]["think"] is False
 
 
 def test_total_failure_message_never_contains_keys():

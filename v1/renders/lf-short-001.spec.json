@@ -1,0 +1,62 @@
+{
+  "content_id": "lf-short-001",
+  "content_type": "short",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "duration_seconds": 46.74,
+  "scenes": [
+    {
+      "asset": "assets/lf-short-001/scene-01.png",
+      "start": 0.0,
+      "duration": 6.33,
+      "motion": "push_in"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-02.png",
+      "start": 6.33,
+      "duration": 5.88,
+      "motion": "pan_left"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-03.png",
+      "start": 12.21,
+      "duration": 5.43,
+      "motion": "push_out"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-04.png",
+      "start": 17.64,
+      "duration": 4.53,
+      "motion": "pan_right"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-05.png",
+      "start": 22.17,
+      "duration": 5.42,
+      "motion": "parallax"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-06.png",
+      "start": 27.59,
+      "duration": 6.34,
+      "motion": "push_in"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-07.png",
+      "start": 33.93,
+      "duration": 5.88,
+      "motion": "pan_left"
+    },
+    {
+      "asset": "assets/lf-short-001/scene-08.png",
+      "start": 39.81,
+      "duration": 6.93,
+      "motion": "push_out"
+    }
+  ],
+  "voice": "audio/lf-short-001.wav",
+  "subtitles": "subtitles/lf-short-001.json",
+  "music": null,
+  "sfx": []
+}

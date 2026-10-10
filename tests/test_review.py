@@ -199,7 +199,11 @@ def test_variation_reports_invalid_values_even_before_enough_videos_exist():
     assert "[ ] narrator styles: need 2+ videos in the window to check" in text
 
 
-def test_variation_reports_brand_config_cannot_reach_minimum():
+def test_variation_reports_brand_config_cannot_reach_minimum(monkeypatch):
+    brand = common.load_brand()
+    brand["narrator_styles"] = brand["narrator_styles"][:1]
+    brand["visual_treatments"] = brand["visual_treatments"][:1]
+    monkeypatch.setattr(common, "load_brand", lambda: brand)
     rows = [video_row(n) for n in range(1, 4)]
     text = report(rows, START + timedelta(days=3))
     assert "configured narrator styles: 1 allowed (need 2)" in text

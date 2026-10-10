@@ -58,16 +58,16 @@ hook_families:                  # log.csv `hook_family` values (Vertical A hook 
 
 narrator_styles:                # log.csv `narrator_style`; R7 needs at least 2 in use per week
   - deep_neutral
-  # TODO Day 1-3: add a second style (for example warm_intimate) and A/B test it
+  - warm_intimate               # reserved for future variation; not used in this video
 
 visual_treatments:              # log.csv `visual_treatment`; R7 needs at least 2 in use per week
   - cinematic_anime
-  # TODO Day 2-3: add a second (Vertical A lists stylized_3d and illustrated_realism)
+  - illustrated_realism         # reserved for future variation; not used in this video
 
 narration:
   style: deep_neutral
   engine: kokoro                # R5 default; A/B test qwen3_tts_0_6b
-  voice_id: null                # TODO Day 1: pick one stable narrator voice
+  voice_id: am_michael          # initial deep-neutral candidate; review the first WAV
   voice_candidates: [am_michael, bm_george, am_adam]   # Kokoro voice names to audition by ear; confirm in the Kokoro voice list
   sample_rate: 24000
   rate: 0.97
@@ -83,17 +83,17 @@ visual:
 
 character_identity:             # one compact identity block per recurring character (reused in every scene prompt)
   - id: char-001
-    name: null                  # TODO Day 1
-    age_range: null
-    hair: null
-    face_shape: null
-    clothing: null
-    palette: null
-    distinguishing_props: null
+    name: Nora
+    age_range: "29"
+    hair: dark wavy hair tied low
+    face_shape: oval
+    clothing: long rust-red raincoat, dark work clothes
+    palette: deep teal, rust red, warm amber
+    distinguishing_props: brass janitor keys and a silver wristwatch
 
 captions:
   preset: kinetic_white
-  font_family: null             # TODO one font family across the channel
+  font_family: Segoe UI         # Windows system font; rendered into video, not embedded
   words_per_chunk: {min: 1, max: 7}
   note: Inside the platform safe zone, high contrast, avoid covering faces.
 

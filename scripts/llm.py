@@ -154,6 +154,7 @@ def request_text(
                 "messages": _messages(system, user),
                 "stream": False,
                 "format": "json",
+                "think": False,
                 "options": {"temperature": temperature, "num_ctx": 8192},
             }
             data = _post(client, f"{base_url}/api/chat", {}, body)

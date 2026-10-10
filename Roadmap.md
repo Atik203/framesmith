@@ -57,12 +57,18 @@ Done when: one complete MP4 passes the Part IX technical checks.
 - [ ] 6–10 stills for one story, one image at a time; seed, checkpoint and license logged
 - [ ] **(agent, optional)** `scripts/images.py` ComfyUI API driver, only if doing it by hand costs over ~2 h/week (R1)
 - [ ] **(agent)** `scripts/align.py`: align the known script to the WAV (WhisperX or faster-whisper) and write `v1/subtitles/{id}.json`, 1–7 words per chunk
-- [ ] `python scripts/build_render_spec.py ... --audio ...` writes `v1/renders/{id}.spec.json`
-- [ ] **(you + agent)** Remotion project `renderer` (`npx create-video@latest --yes --blank renderer`); `ShortVertical` reads the spec with push-in and pan motion and draws the captions
+- [x] `python scripts/build_render_spec.py ... --audio ...` writes `v1/renders/{id}.spec.json` (2026-10-10)
+- [x] **(you + agent)** Remotion project `renderer`; `ShortVertical` reads the spec with push-in and pan motion and draws the captions (2026-10-10)
 - [ ] **(you)** Normalize narration, duck licensed music, final FFmpeg encode (H.264, AAC, yuv420p)
 - [ ] **(agent)** `scripts/qa_check.py`: ffprobe checks from Part IX (container, codec, 1080x1920, stable fps, audio present, no black first or last frame)
 - [ ] Watch on a phone; fix pacing, caption size and audio
 - [ ] First complete MP4 passes the checks
+
+Render note (2026-10-10): `v1/renders/lf-short-001.mp4` was rendered and passed MP4 stream inspection and
+full decode. Representative frames showed readable captions, but `scene-06.png`, `scene-07.png` and
+`scene-08.png` are byte-identical, repeating one sunrise image across three beats. Replace or re-plan those
+scenes and inspect the final cut (including on a phone) before checking off visual QA. No human approval or
+publication is recorded.
 
 ## Phase 3 — Day 3: batch and publish
 
