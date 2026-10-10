@@ -26,9 +26,9 @@ def test_spec_from_script_estimates_is_valid_and_contiguous():
 
 def test_paths_are_relative_to_v1():
     spec = brs.build_spec(script())
-    assert spec["scenes"][0]["asset"] == "assets/lf-short-example/scene-01.png"
-    assert spec["voice"] == "audio/lf-short-example.wav"
-    assert spec["subtitles"] == "subtitles/lf-short-example.json"
+    assert spec["scenes"][0]["asset"] == "assets/fs-short-example/scene-01.png"
+    assert spec["voice"] == "audio/fs-short-example.wav"
+    assert spec["subtitles"] == "subtitles/fs-short-example.json"
     assert brs.build_spec(script(), subtitles_ext="ass")["subtitles"].endswith(".ass")
 
 
@@ -73,7 +73,7 @@ def test_wav_seconds_reads_real_wav(tmp_path):
 
 
 def test_cli_writes_spec_from_audio(tmp_path, capsys):
-    script_path = tmp_path / "lf-short-example.json"
+    script_path = tmp_path / "fs-short-example.json"
     script_path.write_text(json.dumps(script()), encoding="utf-8")
     wav = tmp_path / "voice.wav"
     with wave.open(str(wav), "wb") as handle:

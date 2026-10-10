@@ -1,31 +1,42 @@
-# Lanternfall — AI Content Automation Business (codename: Framesmith) — Master Blueprint
+# Framesmith — Local AI Video Workbench Blueprint
 **Status:** Living source of truth / implementation blueprint
-**Version:** 1.4 (phased Framesmith workbench + Lanternfall content business) — see Revision 1.3 / R15 below for the current project build direction.
+**Version:** 1.5 (Framesmith-only project direction; see R16)
 **Blueprint date:** 2026-10-10
-**Names:** Framesmith is the software project/repository name and may appear on its public source-code pages. Lanternfall is the audience-facing video brand. See R13 and R15.
-**Primary objective:** Build a profitable, scalable, multi-niche, multi-platform English-language short-form content business using agentic automation, with human oversight during the early stages and progressively higher automation as the system proves itself.
-**Initial constraint:** V1 must be buildable in roughly 2–3 days and must be able to produce real videos. Platform publishing can be manual at first; the first target is 5–10 published videos, not a perfect autonomous factory.
+**Identity:** Framesmith is the sole active project and production identity. No separate content business or audience-facing brand is currently planned.
+**Primary objective:** Build a local-first, human-reviewed workbench for developing original video projects, from idea and script through assets, narration, captions, rendering, and QA.
+**Current constraint:** The owner develops and reviews the project locally. The operator UI and full-motion generation path are not complete; publishing and monetization are not active project goals.
 **Source-of-truth rule:** When implementation decisions conflict with this document, update this file first, then implement. Do not allow architecture, prompts, model choices, credentials, platform rules, or business assumptions to exist only in chat history.
+
+## Revision 1.5 — Framesmith-only project direction (2026-10-10)
+### R16. Project identity and active scope
+- Framesmith is the only active name for this repository and its production work. Use it consistently in source, configuration, documentation, and examples.
+- No separate video business, audience-facing brand, monetization plan, or publishing plan is active. Do not present old content-business plans in this blueprint as current direction.
+- R15's local-first, sequential, review-gated workbench direction remains active. R1–R14 and later business-planning sections are historical reference only where they describe publishing, revenue gates, channel branding, or business operations; they do not authorize that work.
+- Keep existing `lf-*` content IDs and associated files stable as legacy identifiers. New project identity does not require renaming existing content records or generated media.
+- Generate new content IDs with the `fs` prefix; accept existing `lf-*` IDs for compatibility with current examples and outputs.
+- The workbench may assemble and export video drafts for owner review. Platform publishing, monetization, and channel operations are outside the active scope.
+- The root `LICENSE` remains PolyForm Noncommercial 1.0.0 for project code only. Third-party assets and generated outputs retain their own rights and provenance.
+
 ## Revision 1.2 — Revenue-First, Budget-Gated Plan with V1.5 Long-Form Pilot (2026-10-08)
-**Status:** R1–R14 govern Lanternfall content, publishing, rights, and business gates. Revision 1.3 / R15 below supersedes only conflicting software-project scope, repository identity, and source-availability decisions. Parts II–XXXVIII remain reference material; the long-form pilot (R12, Part IV.5) is a content experiment. Facts below were checked against the web on 2026-10-08; recheck before spending money.
+**Status:** R16 at the top defines the active project identity and scope. Older business, branding, publishing, and revenue material is historical reference, not current direction. R15's local-first workbench constraints remain applicable unless R16 supersedes them.
 
 ## Revision 1.3 — Review-Gated Framesmith Workbench (2026-10-10)
-**Status:** R15 below updates the software-project scope and public-source terms. It supersedes conflicting R1/R2/R13 statements about whether to build a local UI now and whether the Framesmith name may appear on software-repository pages. R1–R14 still govern Lanternfall content, human approval, rights/provenance, spending, and manual publishing unless R15 explicitly says otherwise. Framesmith is not yet a completed application; Roadmap.md records the actual state.
+**Status:** R15 establishes the local-first, review-gated workbench direction. R16 supersedes its remaining separate-business and brand framing. Framesmith is not yet a completed application; Roadmap.md records the actual state.
 
 ### R15. Project direction, generation gates, and source availability
-- Build Framesmith in phases as a local-first, human-reviewed production workbench. The owner has chosen to develop the software workflow before proving the content business gates; Gate A/B and revenue gates remain business/monetization decisions, not prerequisites for the UI or workflow engine.
+- Build Framesmith in phases as a local-first, human-reviewed production workbench. Revenue gates and publishing goals are historical business-planning material, not prerequisites or active goals for the UI or workflow engine.
 - Keep the current Windows-first scripts and Remotion renderer as the production foundation. A local UI and a resumable, sequential job queue are planned, not implemented. Select the UI/runtime stack in a focused design step before adding it; do not introduce a broad agent framework, database, cloud orchestration service, or publishing integration by default.
 - Treat “agents” as bounded steps in one ordered pipeline. Run one model/GPU-heavy task at a time; stop/unload one local model before loading another. CPU narration, caption alignment, and deterministic rendering may follow. Persist each step's inputs, outputs, status, and errors so a failed run can resume without regenerating approved assets.
-- Target workflow: (1) draft five ideas; (2) owner chooses one or more; (3) draft premise/script and owner edits/approves; (4) generate stills sequentially; (5) owner reviews, accepts, or requests replacement; (6) only after an explicit owner click, generate motion shots; (7) assemble approved clips with narration, aligned captions, and licensed sound; (8) run technical and visual QA; (9) owner reviews final cut and publishes manually.
+- Target workflow: (1) draft five ideas; (2) owner chooses one or more; (3) draft premise/script and owner edits/approves; (4) generate stills sequentially; (5) owner reviews, accepts, or requests replacement; (6) only after an explicit owner click, generate motion shots; (7) assemble approved clips with narration, aligned captions, and licensed sound; (8) run technical and visual QA; (9) export the draft for owner review.
 - Make each approval a real stop in the queue: idea selection, script approval, image approval, any paid video-generation request, and final-cut approval. No agent publishes, uploads, or silently spends money.
 - The owner has tested FramePack and reports excessive laptop stress and slow generation on the RTX 3060 Laptop GPU with 6 GB VRAM. Do not make local video generation the default or promise it will be usable. Revisit only after a measured, owner-approved test.
 - Image-to-video APIs are optional experiments, not a default dependency. Before a paid request, show provider, shot duration/resolution, estimate including retries, and cumulative reel spend; require the owner to approve each run within a configured cap. Do not add credits, activate a subscription, or call a paid API without explicit approval. Recheck live prices and terms at test time. If no affordable option meets the motion-quality bar, stop and label the reel a draft; do not call a pan/zoom slideshow a fully animated video.
-- Keep idea/script generation, local image generation, Kokoro narration, forced alignment, Remotion/FFmpeg assembly, QA, and the UI usable without video-generation API spend. Keep platform publishing manual.
+- Keep idea/script generation, local image generation, Kokoro narration, forced alignment, Remotion/FFmpeg assembly, QA, and the UI usable without video-generation API spend. Platform publishing is outside the active project scope.
 - The repository may be made public by the owner as a source-available software project under PolyForm Noncommercial 1.0.0. This license is for the project code; it does not grant rights to generated stories/media, third-party dependencies, voices, models, fonts, or music. Maintain their separate terms and provenance. No generated media, model weights, secrets, or large binaries go into Git. Do not describe the project as OSI open source.
 - A GitHub repository description and topics should describe an in-progress, local-first, human-reviewed video workbench and must not imply that full-motion generation, a UI, or publishing automation is already working.
 
 ### R1. Priority change
-For the Lanternfall content business, the order remains (1) publish videos, (2) learn what earns, (3) earn, (4) automate content work. For the Framesmith software project, R15 authorizes phased local workbench development before those business gates.
+The previously drafted content-business sequence is not an active plan. Framesmith development follows the local-first workbench phases in R15 and Roadmap.md.
 - Avoid adding production tooling just to automate a task that has not become a demonstrated bottleneck; R15's explicitly requested local UI and resumable queue are the exception.
 - The present foundation is Python scripts, one Remotion renderer, and one tracking sheet. The local UI is planned and must not be described as built.
 - Content-business success is still measured in published videos and viewer behavior, not architecture.
@@ -233,37 +244,18 @@ After two pilots:
 #### V2 long-form objective
 Once the content model is proven and the V2 gate is reached, automate the long-form pipeline using the same content objects, research agents, story agents, visual planning, TTS, rendering, QA, analytics, and platform adapters. Do not create a separate application for long-form.
 
-### R13. Naming and brand (decided 2026-10-08)
-| Item | Decision |
-| --- | --- |
-| Public brand | **Lanternfall** (display name on every platform) |
-| Software project/repo name | **Framesmith**. May be used on GitHub/source-code project pages. It must not appear in Lanternfall videos, captions, titles, descriptions, handles, or audience-facing brand pages. |
-| First brand config | `configs/brands/lanternfall.yaml`, `brand_id: lanternfall` |
-| Naming conventions | repo `framesmith`; env prefix `FRAMESMITH_`; bucket `framesmith`; Remotion project `renderer` |
-
-Handle rule: YouTube display names do not need to be unique, but handles do. Use `@lanternfall` where free; otherwise use one variant (`@lanternfallstories`, `@lanternfalltales` or `@lanternfallofficial`) and keep the display name "Lanternfall". Prefer the same handle on every platform.
-
-Availability status (owner checks plus web search, 2026-10-08):
-| Check | Status |
-| --- | --- |
-| TikTok handle | reported available (owner check) |
-| YouTube | a channel named Lanternfall exists but is empty; use a handle variant |
-| Instagram, Facebook Page | pending |
-| Domain (.com plus one backup) | pending |
-| Trademark: USPTO, WIPO Global Brand Database, home-country registry | pending; check entertainment and video classes |
-| Web search for existing brands | no exact-name conflict found for Lanternfall; "Lantern/Lanterns" is a busy term (for example an HBO Max series); Frameo.ai is a similar-looking name in the AI story-video category, so recheck Framesmith before ever selling it as a tool |
-
-Rules:
-- Do not spend money on a custom domain, ads or merchandise until the pending checks pass.
-- Web search cannot confirm handle or domain availability; only the platforms and registrars can.
-- If the trademark check turns up a conflict, rename before the channel has an audience.
+### R13. Naming and brand (historical; superseded by R16)
+R16 establishes Framesmith as the sole project and production identity. This section's former separate-brand,
+channel, handle, domain, and trademark planning is retired and is not an active project requirement.
+The repository name is `framesmith`; environment variables use the `FRAMESMITH_` prefix; the renderer project
+is `renderer`.
 
 ### R14. Repo and tooling conventions (decided 2026-10-10)
 Building the repo scaffold turned several open details into decisions. They bind code and agents; change them here first.
 | Item | Decision |
 | --- | --- |
 | Agent entry points | `AGENTS.md` (rules for coding agents), `CLAUDE.md` (imports AGENTS.md) and `Roadmap.md` (checkbox progress tracker; tick a box and add the date in the same change that finishes the task). |
-| Content IDs | `lf-short-001`, `lf-long-001`, and so on. Derivative Shorts set `parent_content_id` to the long-form episode. Pattern `^[a-z0-9][a-z0-9-]{2,40}$`. |
+| Content IDs | New IDs use `fs-short-001` and `fs-long-001`. Existing `lf-*` IDs remain valid for legacy content. Derivative Shorts set `parent_content_id` to the long-form episode. Pattern `^[a-z0-9][a-z0-9-]{2,40}$`. |
 | Schemas | `schemas/{idea,script,render_spec}.schema.json` are strict (`additionalProperties: false`) so model drift fails validation and triggers a retry. Idea scores are integers 1–5: 5 is best for `visual_potential` and `novelty`; 5 is worst for `production_difficulty` and `policy_risk`. |
 | LLM calls | Providers in `FRAMESMITH_LLM_PROVIDERS` order (default openrouter, ollama, openai). OpenRouter is the free attempt; local Ollama is the no-cost second fallback; OpenAI is last and may spend only the existing $5 credit. Up to `FRAMESMITH_LLM_MAX_RETRIES` (3) attempts per provider; invalid output is fed back to the model; then the next provider. Model names are configured in `.env` and recorded per video. Code sets `content_id`, `niche`, `language`, `content_type`, segment `index` and `estimated_duration_seconds`. |
 | Prompts | `prompts/niches/ai_stories/*_v1.md`; the `id` in each file's front matter is the prompt version. `scripts/generate.py` writes `{content_id}.meta.json` next to each script with provider, model, prompt id and story structure. |
@@ -271,7 +263,7 @@ Building the repo scaffold turned several open details into decisions. They bind
 | Tracking log | `log.csv` columns: `content_id, content_type, parent_content_id, title, date, platform, url, story_structure, hook_family, narrator_style, visual_treatment, duration_seconds, script_version, model_names, active_minutes, cost_usd, human_pass, disclosure, views_24h, views_72h, views_latest, viewed_vs_swiped, avg_pct_viewed, followers_gained, ctr, first30_retention, avg_view_duration_s, notes`. Repeat the production fields on every platform row of a video. `scripts/review.py` takes the maximum of `active_minutes` and `cost_usd`, sums views and averages percentages per video. |
 | Kill switches | `FRAMESMITH_PUBLISHING_ENABLED` (default `false`) and `FRAMESMITH_GENERATION_ENABLED`; scripts call `common.require_generation_enabled()` before any generation. |
 | Tooling | Current scripts are `check_env`, `validate`, `generate`, `build_render_spec`, `review`, `tts`, and `align`. A standalone MP4 QA command, ComfyUI driver, operator UI/job queue, full-motion video generation, and long-form script generation are not built. See R15 and Roadmap.md for the build phases. |
-| Brand lists | `configs/brands/lanternfall.yaml` holds the allowed `story_structures`, `hook_families`, `narrator_styles` and `visual_treatments`. Use exactly those values in `log.csv` so the R7 variation check can count them. |
+| Production profile | `configs/brands/framesmith.yaml` holds the story structures, hook families, narrator styles and visual treatments used by the scripts. |
 ## Executive Summary
 The business is a content operating system rather than a collection of one-off automation scripts. It will use a shared pipeline for ideation, research, scripting, asset generation, voice, subtitles, editing, quality assurance, publishing, analytics, and experimentation. Niche-specific agents will specialize the research and writing logic without creating entirely separate applications.
 The system is deliberately staged. V1 optimizes for speed to first output and learning. A V1.5 long-form pilot is introduced in Weeks 2–3 so the business can test the economics and audience value of 8–12 minute YouTube videos without waiting for the full V2 engineering stack. V2 introduces structured orchestration, reusable templates, automated research, batch processing, analytics ingestion, and semi-automatic publishing across both Shorts and long-form. V3 turns the system into a production-grade media company with multiple brands, durable workflows, automatic experiment allocation, asset provenance, cost controls, platform adapters, and a feedback loop that improves creative decisions from real performance data.
@@ -325,7 +317,7 @@ V1 is not an autonomous business. V1 is the smallest complete content factory th
 6. Generate subtitles from final audio using speech recognition.
 7. Render a 9:16 MP4 with clean captions and audio.
 8. Perform a manual quality check.
-9. Export a final file and publish manually to 5–10 posts across one or more platforms.
+9. Export a draft for owner review. Publishing and platform operations are outside the active project scope.
 10. Record the publication date, title, script version, model versions, and basic performance metrics in a simple log.
 ## V1 Success Criteria
 > **Revision 1.2:** The "Manual publish batch" row is superseded by R8 (Gates A and B).
@@ -770,7 +762,7 @@ ffmpeg -i input.mp4 -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k output.mp4
 ```text
 framesmith/
 ├── AGENTS.md  CLAUDE.md  README.md  Roadmap.md  blueprint.md  log.csv
-├── configs/brands/lanternfall.yaml
+├── configs/brands/framesmith.yaml
 ├── schemas/             JSON Schemas (idea, script, render spec) + examples
 ├── prompts/             versioned prompt files
 ├── scripts/             plain Python scripts (no package)
@@ -1298,11 +1290,11 @@ V3 is not simply “remove the human.” It is a controlled autonomous productio
                         v
                  Experiment Agent
 ```
-## V3 Multiple Brands
-Each channel becomes configuration, not a new codebase.
+## V3 Multiple Production Profiles (historical proposal; not active)
+Additional profiles were once considered; Framesmith currently has one production profile.
 ```yaml
 brands/
-  lanternfall.yaml        # first brand: original AI cinematic stories
+  framesmith.yaml        # Framesmith production profile
   story-dark.yaml
   story-wholesome.yaml
   mystery-science.yaml
@@ -1311,8 +1303,8 @@ brands/
 ```
 ## Brand Configuration
 ```yaml
-brand_id: lanternfall
-name: Lanternfall
+  brand_id: framesmith
+name: Framesmith
 language: en
 formats:
   - short
@@ -1331,7 +1323,7 @@ forbidden_topics:
 caption_style: kinetic_white
 watermark: none
 ```
-The canonical, fuller file is `configs/brands/lanternfall.yaml` (R14).
+The canonical, fuller file is `configs/brands/framesmith.yaml` (R14).
 ## V3 Automated Experimentation
 Use an explore/exploit allocation. Production should not become a machine that copies the last viral format forever.
 ```text
@@ -2293,7 +2285,7 @@ def create_video(idea_id: str) -> str:
 ## Niche Config
 ```yaml
 niche_id: ai_stories
-brand_id: lanternfall
+brand_id: framesmith
 language: en
 audience: global_english
 content_type: fiction
@@ -2470,7 +2462,7 @@ analytics/metrics.md          # metric definitions
 - Corrected the YPP watch-hour bar: 8,000 hours for new applicants from 2027-02-01 (4,000 before), with the views-needed math and RPM planning range.
 - Added long-form risks (inauthentic-content enforcement, cadence cap, retention) and restored the retention-first V2 spend order.
 - Reconciled visual density (story beats versus shots versus unique images) and Gate B (30 Shorts plus 2 long-form pilots).
-- Added R13: public brand Lanternfall, codename and repo Framesmith, handle rule and availability checklist; renamed repo, bucket, env prefix and Remotion project; added `lanternfall` as the first brand config.
+- Added R13: historical naming and channel-planning material. R16 later retired that separate-brand direction and established Framesmith as the sole project identity.
 
 ## 2026-10-10 (Revision 1.3, repo scaffold)
 - Created the framesmith repo: AGENTS.md, CLAUDE.md, Roadmap.md, README, .env.example, brand config, JSON Schemas, prompt files, provenance records, log.csv, tests, and the scripts check_env, validate, generate, build_render_spec and review.
@@ -2481,7 +2473,7 @@ analytics/metrics.md          # metric definitions
 ## 2026-10-10 (V1 audit corrections)
 - Gate A means every published video has a recorded active time of at most 60 minutes; missing times or any video over 60 minutes fail the gate.
 - Short render specs must contain 6–10 scenes at 30 fps, with scenes contiguous and covering the full duration. Invalid render specs fail validation.
-- R7 variation reporting counts only values in the Lanternfall brand lists and reports when the configured lists cannot meet the required variety.
+- R7 variation reporting counts only values in the configured production-profile lists and reports when the lists cannot meet the required variety.
 - Updated the V1 hardware record to the owner's Ryzen 7 5800H, 32 GB RAM and RTX 3060 6 GB laptop.
 - Selected Gemini `gemini-3.8-flash` and OpenRouter `qwen/qwen3.8-27b:free` as the free-first provider chain, with OpenAI `gpt-6-luna` as a third fallback limited to the already available $5 credit. Removed Groq from active V1 configuration; no additional credit or paid service is authorized.
 - Live smoke tests: OpenAI `gpt-6-luna` passed one JSON request. Gemini returned HTTP 402 because its project has depleted prepay credits; Google advises not retrying until billing is fixed. OpenRouter returned HTTP 404 that the pinned Qwen free endpoint was unavailable, so replaced it with `nvidia/nemotron-3-ultra-550b-a55b:free`, which returned HTTP 200 on a one-request check. OpenRouter's selected model does not support `response_format`; rely on the existing strict JSON/schema validation and retry path.
@@ -2496,12 +2488,17 @@ analytics/metrics.md          # metric definitions
 - Removed Gemini and OpenCode credentials/model settings from the local `.env` and kept `.env.example` limited to the two supported providers.
 
 ## 2026-10-10 (Revision 1.4, review-gated workbench direction)
-- Added R15: develop the local-first Framesmith workbench in phases now, without waiting on audience/revenue gates; keep Lanternfall publishing, business spend, and quality approvals governed by R1–R14.
+- Added R15: develop the local-first Framesmith workbench in phases. R16 supersedes the separate content-business framing; publishing and monetization are not current project goals.
 - Set the intended workflow to sequential generation with explicit owner checkpoints for ideas, scripts, images, paid motion generation, and final cut. Do not run GPU-heavy models concurrently.
 - Recorded the owner's FramePack experience (slow and stressful on the 6 GB laptop GPU); local video generation is not the default. Image-to-video APIs remain opt-in, budget-capped and subject to live price review and explicit approval.
 - Clarified that pan/zoom over stills is not a substitute for full-motion video when the quality bar calls for animation; a reel that misses that bar stays a draft.
-- Permitted the Framesmith name on software-repository pages, while keeping Lanternfall branding in audience-facing video content. Specified PolyForm Noncommercial 1.0.0 for project code only; generated media and dependencies retain separate rights.
+- Specified PolyForm Noncommercial 1.0.0 for project code only; generated media and dependencies retain separate rights.
 - Audit correction: the current source still includes the Ollama fallback between OpenRouter and OpenAI; the earlier provider-removal note is historical and does not describe the current implementation.
+
+## 2026-10-10 (Revision 1.5, Framesmith-only project identity)
+- Added R16: Framesmith is the only active project and production identity; older content-business, brand, channel, publishing, and revenue material is historical reference only.
+- Renamed the active production profile and updated its loader defaults, docs, examples, and tests. New content IDs use the `fs` prefix; existing `lf-*` IDs and media paths remain compatible.
+- Removed separate-brand handle and channel planning from the active blueprint. Publishing and monetization are outside the current project scope.
 ```
 # Part XXXVII — Current Tool References
 ## Official References
@@ -2554,7 +2551,7 @@ The URLs above are the baseline references checked for this blueprint on 2026-10
 7. Build one Remotion template.
 8. Add FFmpeg validation.
 9. Generate the first three videos.
-10. Publish manually.
+10. Export for owner review; publishing is outside the active project scope.
 11. Record metrics.
 12. Fix obvious quality problems.
 13. Produce 5–10 videos.
@@ -2644,7 +2641,7 @@ Use this when a platform policy changes, a model produces unsafe content, a cred
 10. Percentage of content rejected by QA.
 11. Percentage of assets with complete provenance.
 # Conclusion
-The software goal is a local-first, review-gated workbench that carries a story from idea selection through approved assets, motion, narration, captions, deterministic assembly and technical QA. Build it sequentially, keep its GPU workload within the owner's 6 GB laptop, and never treat an unapproved output as a finished video. This application work can proceed before the Lanternfall business passes its audience and revenue gates.
+The software goal is a local-first, review-gated workbench that carries a project from idea selection through approved assets, motion, narration, captions, deterministic assembly and technical QA. Build it sequentially, keep its GPU workload within the owner's 6 GB laptop, and never treat an unapproved output as a finished video. Content-business and revenue experiments are not active goals.
 
 The production quality bar includes actual animated shots when the owner asks for full motion. Still-image pans and zooms may be useful previews, but they do not satisfy that bar. Since local FramePack was too slow and stressful on this machine and paid video APIs may not be sustainable, the workbench must make motion generation optional and cost-visible; if no approved option fits, stop at a clearly labeled draft. Audio, captions, assembly, provenance, final review and manual publishing remain separate, explicit steps.
 

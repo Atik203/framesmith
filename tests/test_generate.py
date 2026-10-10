@@ -86,13 +86,13 @@ def test_script_from_premise_sets_deterministic_fields(tmp_path):
         client_returning(raw_script()),
     )
     assert code == 0
-    out = tmp_path / "v1" / "scripts" / "lf-short-001.json"
+    out = tmp_path / "v1" / "scripts" / "fs-short-001.json"
     data = json.loads(out.read_text(encoding="utf-8"))
-    assert data["content_id"] == "lf-short-001"
+    assert data["content_id"] == "fs-short-001"
     assert data["niche"] == "ai_stories" and data["content_type"] == "short"
     assert data["estimated_duration_seconds"] == 38
     assert validate.validate("script", data)[0] == []
-    meta = json.loads(out.with_name("lf-short-001.meta.json").read_text(encoding="utf-8"))
+    meta = json.loads(out.with_name("fs-short-001.meta.json").read_text(encoding="utf-8"))
     brand = common.load_brand()
     assert meta["story_structure"] == brand["story_structures"][0]
     assert meta["prompt_id"] == "story_writer_v1" and meta["source"] == "premise"
@@ -105,11 +105,11 @@ def test_second_script_gets_next_id_and_next_structure(tmp_path):
     scripts = tmp_path / "v1" / "scripts"
     metas = {
         name: json.loads((scripts / f"{name}.meta.json").read_text(encoding="utf-8"))
-        for name in ("lf-short-001", "lf-short-002")
+        for name in ("fs-short-001", "fs-short-002")
     }
     structures = common.load_brand()["story_structures"]
-    assert metas["lf-short-001"]["story_structure"] == structures[0]
-    assert metas["lf-short-002"]["story_structure"] == structures[1]
+    assert metas["fs-short-001"]["story_structure"] == structures[0]
+    assert metas["fs-short-002"]["story_structure"] == structures[1]
 
 
 def test_script_from_idea_file_uses_picked_idea(tmp_path):

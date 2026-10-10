@@ -1,20 +1,12 @@
-# Lanternfall brand config (blueprint R13 and Part VI "Brand Configuration").
-# Public brand: Lanternfall. The internal codename must never appear in public output.
-# TODO items are Day 1 decisions (R11: "Fix the brand sheet"); change them here, not in code.
+# Framesmith production profile. Keep deterministic production choices here, not in prompt text or code.
 
-brand_id: lanternfall
-name: Lanternfall
-internal_codename: framesmith   # internal only
-content_id_prefix: lf           # lf-short-001, lf-long-001 (blueprint R14)
+brand_id: framesmith
+name: Framesmith
+content_id_prefix: fs           # new IDs; existing lf-* records remain valid
 niche: ai_stories
 language: en
 audience: global_english        # approximately 18-34
 tone: [mysterious, emotional, cinematic, intelligent]
-
-handles:                        # R13: @lanternfall where free, else ONE variant on every platform
-  preferred: "@lanternfall"
-  chosen: null                  # TODO after owner checks; YouTube already has an empty "Lanternfall" channel
-  status: pending               # Instagram, Facebook Page, domain and trademark checks still pending
 
 formats:
   short:
