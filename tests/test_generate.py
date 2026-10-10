@@ -20,7 +20,7 @@ def env_for(tmp_path, **extra):
     return {
         "FRAMESMITH_LLM_PROVIDERS": "openrouter",
         "FRAMESMITH_OPENROUTER_API_KEY": KEY,
-        "FRAMESMITH_OPENROUTER_MODEL": "qwen/qwen3.8-27b:free",
+        "FRAMESMITH_OPENROUTER_MODEL": "nvidia/nemotron-3-ultra-550b-a55b:free",
         "FRAMESMITH_DATA_DIR": str(tmp_path / "v1"),
         **extra,
     }

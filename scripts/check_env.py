@@ -59,7 +59,7 @@ OPTIONAL_PACKAGES = {
     "soundfile": "soundfile",
     "faster_whisper": "faster-whisper",
 }
-PROVIDERS = ("gemini", "openrouter", "openai", "ollama")
+PROVIDERS = ("gemini", "openrouter", "opencode", "openai", "ollama")
 
 failures = 0
 

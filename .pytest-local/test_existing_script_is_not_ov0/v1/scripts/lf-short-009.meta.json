@@ -1,0 +1,11 @@
+{
+  "kind": "script",
+  "content_id": "lf-short-009",
+  "provider": "openrouter",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "prompt_id": "story_writer_v1",
+  "story_structure": "mystery",
+  "source": "premise",
+  "attempts": 1,
+  "generated_at": "2026-10-10T12:47:53+00:00"
+}
