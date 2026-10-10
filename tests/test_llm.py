@@ -4,26 +4,20 @@ import httpx
 import llm
 import pytest
 
-KEY_A = "key-gemini-123456"
 KEY_B = "key-openrouter-654321"
 KEY_C = "key-openai-abcdef"
 ENV = {
-    "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
-    "FRAMESMITH_GEMINI_API_KEY": KEY_A,
-    "FRAMESMITH_GEMINI_MODEL": "gem-model",
+    "FRAMESMITH_LLM_PROVIDERS": "openrouter,ollama,openai",
     "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,
     "FRAMESMITH_OPENROUTER_MODEL": "nvidia/nemotron-3-ultra-550b-a55b:free",
     "FRAMESMITH_OPENAI_API_KEY": KEY_C,
     "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",
+    "FRAMESMITH_OLLAMA_MODEL": "qwen3.5:4b-q4_K_M",
 }
 
 
 def client_for(handler):
     return httpx.Client(transport=httpx.MockTransport(handler))
-
-
-def gemini_reply(text):
-    return httpx.Response(200, json={"candidates": [{"content": {"parts": [{"text": text}]}}]})
 
 
 def openai_reply(text):
@@ -53,49 +47,36 @@ def test_extract_json_handles_fences_and_prose():
         llm.extract_json("{broken")
 
 
-def test_gemini_key_goes_in_header_not_url():
-    seen = {}
-
-    def handler(request):
-        seen["url"] = str(request.url)
-        seen["header"] = request.headers.get("x-goog-api-key")
-        seen["body"] = json.loads(request.content)
-        return gemini_reply('{"ok": true}')
-
-    result, _ = run(handler)
-    assert result.provider == "gemini" and result.model == "gem-model"
-    assert seen["header"] == KEY_A and KEY_A not in seen["url"]
-    assert "gem-model:generateContent" in seen["url"]
-    assert seen["body"]["generationConfig"]["responseMimeType"] == "application/json"
-
-
 def test_falls_back_after_retryable_errors():
-    calls = {"gemini": 0, "openrouter": 0}
+    calls = {"openrouter": 0, "ollama": 0, "openai": 0}
 
     def handler(request):
-        if request.url.host.startswith("generativelanguage"):
-            calls["gemini"] += 1
+        if request.url.host == "openrouter.ai":
+            calls["openrouter"] += 1
             return httpx.Response(503, text="overloaded")
-        calls["openrouter"] += 1
+        if request.url.path == "/api/chat":
+            calls["ollama"] += 1
+            return httpx.Response(200, json={"message": {"content": '{"ok": true}'}})
+        calls["openai"] += 1
         return openai_reply('{"ok": true}')
 
     result, sleeps = run(handler)
-    assert result.provider == "openrouter"
-    assert calls == {"gemini": 3, "openrouter": 1}  # 3 attempts, then fallback
+    assert result.provider == "ollama"
+    assert calls == {"openrouter": 3, "ollama": 1, "openai": 0}  # local fallback precedes paid API
     assert len(sleeps) == 2  # backoff between the 3 attempts, none after the last
 
 
 def test_non_retryable_status_skips_straight_to_next_provider():
-    calls = {"gemini": 0}
+    calls = {"openrouter": 0}
 
     def handler(request):
-        if request.url.host.startswith("generativelanguage"):
-            calls["gemini"] += 1
+        if request.url.host == "openrouter.ai":
+            calls["openrouter"] += 1
             return httpx.Response(401, text="API key not valid")
         return openai_reply('{"ok": true}')
 
     result, sleeps = run(handler)
-    assert result.provider == "openrouter" and calls["gemini"] == 1 and sleeps == []
+    assert result.provider == "openai" and calls["openrouter"] == 1 and sleeps == []
 
 
 def test_invalid_output_is_fed_back_and_retried():
@@ -104,11 +85,11 @@ def test_invalid_output_is_fed_back_and_retried():
     def handler(request):
         bodies.append(json.loads(request.content))
         text = "not json at all" if len(bodies) == 1 else '{"ok": true}'
-        return gemini_reply(text)
+        return openai_reply(text)
 
-    result, _ = run(handler)
-    assert result.provider == "gemini" and result.attempts == 2
-    second_prompt = bodies[1]["contents"][0]["parts"][0]["text"]
+    result, _ = run(handler, {**ENV, "FRAMESMITH_LLM_PROVIDERS": "openrouter,openai"})
+    assert result.provider == "openrouter" and result.attempts == 2
+    second_prompt = bodies[1]["messages"][1]["content"]
     assert "rejected" in second_prompt and "not valid JSON" in second_prompt
 
 
@@ -117,11 +98,11 @@ def test_schema_style_rejection_is_fed_back():
 
     def handler(request):
         bodies.append(json.loads(request.content))
-        return gemini_reply('{"ok": false}' if len(bodies) == 1 else '{"ok": true}')
+        return openai_reply('{"ok": false}' if len(bodies) == 1 else '{"ok": true}')
 
     result, _ = run(handler)
     assert result.attempts == 2
-    assert "field 'ok' must be true" in bodies[1]["contents"][0]["parts"][0]["text"]
+    assert "field 'ok' must be true" in bodies[1]["messages"][1]["content"]
 
 
 def test_openrouter_uses_bearer_header():
@@ -160,49 +141,60 @@ def test_openai_uses_chat_completions_json_mode_and_bearer_header():
     assert seen["body"]["temperature"] == 0.9
 
 
-def test_ollama_uses_native_chat_endpoint():
+def test_ollama_uses_local_chat_api_without_api_key():
     seen = {}
 
     def handler(request):
         seen["url"] = str(request.url)
+        seen["auth"] = request.headers.get("authorization")
         seen["body"] = json.loads(request.content)
         return httpx.Response(200, json={"message": {"content": '{"ok": true}'}})
 
-    env = {"FRAMESMITH_LLM_PROVIDERS": "ollama", "FRAMESMITH_OLLAMA_MODEL": "local-model"}
+    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "ollama"}
     result, _ = run(handler, env)
-    assert result.provider == "ollama"
-    assert seen["url"].endswith("/api/chat")
-    assert seen["body"]["format"] == "json" and seen["body"]["stream"] is False
+    assert result.provider == "ollama" and result.model == "qwen3.5:4b-q4_K_M"
+    assert seen["url"] == "http://127.0.0.1:11434/api/chat"
+    assert seen["auth"] is None
+    assert seen["body"]["model"] == "qwen3.5:4b-q4_K_M"
+    assert seen["body"]["stream"] is False
+    assert seen["body"]["format"] == "json"
 
 
 def test_total_failure_message_never_contains_keys():
     def handler(request):
-        return httpx.Response(500, text=f"boom {KEY_A} {KEY_B} {KEY_C}")
+        return httpx.Response(500, text=f"boom {KEY_B} {KEY_C}")
 
     with pytest.raises(llm.LLMError) as caught:
         run(handler)
     message = str(caught.value)
     assert "all providers failed" in message
-    assert all(key not in message for key in (KEY_A, KEY_B, KEY_C))
+    assert all(key not in message for key in (KEY_B, KEY_C))
 
 
 def test_provider_without_model_or_key_is_skipped():
     env = {
-        "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
-        "FRAMESMITH_GEMINI_API_KEY": KEY_A,  # no model
-        "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,  # no model
-        "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",  # no key
+        "FRAMESMITH_LLM_PROVIDERS": "gemini,opencode,openrouter,ollama,openai",
+        "FRAMESMITH_GEMINI_API_KEY": "stale-gemini-key",
+        "FRAMESMITH_GEMINI_MODEL": "stale-model",
+        "FRAMESMITH_OLLAMA_MODEL": "qwen3.5:4b-q4_K_M",
+        "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,
+        "FRAMESMITH_OPENROUTER_MODEL": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "FRAMESMITH_OPENAI_API_KEY": KEY_C,
+        "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",
     }
     providers, skipped = llm.configured_providers(env)
-    assert providers == []
-    assert len(skipped) == 3
+    assert [provider.name for provider in providers] == ["openrouter", "ollama", "openai"]
+    assert skipped == [
+        "gemini: unknown provider",
+        "opencode: unknown provider",
+    ]
 
 
 def test_default_provider_order_uses_verified_free_endpoint_first():
     env = {key: value for key, value in ENV.items() if key != "FRAMESMITH_LLM_PROVIDERS"}
     providers, skipped = llm.configured_providers(env)
     assert skipped == []
-    assert [provider.name for provider in providers] == ["openrouter", "openai"]
+    assert [provider.name for provider in providers] == ["openrouter", "ollama", "openai"]
 
 
 def test_no_usable_provider_raises_clear_error():
@@ -217,7 +209,7 @@ def test_retry_count_comes_from_env():
         calls["n"] += 1
         return httpx.Response(500)
 
-    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "gemini", "FRAMESMITH_LLM_MAX_RETRIES": "2"}
+    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "openrouter", "FRAMESMITH_LLM_MAX_RETRIES": "2"}
     with pytest.raises(llm.LLMError):
         run(handler, env)
     assert calls["n"] == 2
@@ -225,9 +217,9 @@ def test_retry_count_comes_from_env():
 
 def test_network_error_is_retried_then_falls_back():
     def handler(request):
-        if request.url.host.startswith("generativelanguage"):
+        if request.url.host == "openrouter.ai":
             raise httpx.ConnectError("no route")
-        return openai_reply('{"ok": true}')
+        return httpx.Response(200, json={"message": {"content": '{"ok": true}'}})
 
     result, sleeps = run(handler)
-    assert result.provider == "openrouter" and len(sleeps) == 2
+    assert result.provider == "ollama" and len(sleeps) == 2

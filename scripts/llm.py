@@ -1,6 +1,6 @@
 """LLM calls with JSON validation, retries and provider fallback (blueprint R5, R11).
 
-Providers are tried in FRAMESMITH_LLM_PROVIDERS order: openrouter, openai.
+Providers are tried in FRAMESMITH_LLM_PROVIDERS order: openrouter, ollama, openai.
 Model names are never hard-coded: set FRAMESMITH_<PROVIDER>_MODEL in .env.
 API keys travel in request headers only and never appear in raised messages.
 """
@@ -16,13 +16,12 @@ from typing import Any
 
 import httpx
 
-KNOWN_PROVIDERS = ("gemini", "openrouter", "openai", "ollama")
-DEFAULT_ORDER = "openrouter,openai"
-NEEDS_KEY = {"gemini", "openrouter", "openai"}
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+KNOWN_PROVIDERS = ("openrouter", "ollama", "openai")
+DEFAULT_ORDER = "openrouter,ollama,openai"
+NEEDS_KEY = {"openrouter", "openai"}
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
-OLLAMA_DEFAULT_URL = "http://127.0.0.1:11434"
+OLLAMA_URL = "http://127.0.0.1:11434"
 RETRYABLE_STATUS = {408, 425, 429, 500, 502, 503, 504}
 
 # check(data) -> (possibly normalized data, list of problems). Empty list means valid.
@@ -81,10 +80,8 @@ def configured_providers(
         elif not model:
             skipped.append(f"{name}: no model name (set {prefix}_MODEL)")
         else:
-            base = ""
-            if name == "ollama":
-                base = env.get("FRAMESMITH_OLLAMA_URL", OLLAMA_DEFAULT_URL).rstrip("/")
-            providers.append(Provider(name, model, key, base))
+            base_url = env.get("FRAMESMITH_OLLAMA_URL", OLLAMA_URL).strip() if name == "ollama" else ""
+            providers.append(Provider(name, model, key, base_url))
     return providers, skipped
 
 
@@ -134,24 +131,7 @@ def request_text(
 ) -> str:
     """One call to one provider; returns the model's text."""
     try:
-        if provider.name == "gemini":
-            model = provider.model.removeprefix("models/")
-            data = _post(
-                client,
-                GEMINI_URL.format(model=model),
-                {"x-goog-api-key": provider.api_key},
-                {
-                    "systemInstruction": {"parts": [{"text": system}]},
-                    "contents": [{"role": "user", "parts": [{"text": user}]}],
-                    "generationConfig": {
-                        "temperature": temperature,
-                        "responseMimeType": "application/json",
-                    },
-                },
-            )
-            parts = data["candidates"][0]["content"]["parts"]
-            text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
-        elif provider.name in ("openrouter", "openai"):
+        if provider.name in ("openrouter", "openai"):
             body: dict[str, Any] = {
                 "model": provider.model,
                 "messages": _messages(system, user),
@@ -163,20 +143,19 @@ def request_text(
             url = OPENAI_URL if provider.name == "openai" else OPENROUTER_URL
             data = _post(client, url, {"Authorization": f"Bearer {provider.api_key}"}, body)
             text = data["choices"][0]["message"]["content"] or ""
-        else:  # ollama
-            data = _post(
-                client,
-                f"{provider.base_url}/api/chat",
-                {},
-                {
-                    "model": provider.model,
-                    "messages": _messages(system, user),
-                    "stream": False,
-                    "format": "json",
-                    "options": {"temperature": temperature},
-                },
-            )
+        elif provider.name == "ollama":
+            base_url = (provider.base_url or OLLAMA_URL).rstrip("/")
+            body = {
+                "model": provider.model,
+                "messages": _messages(system, user),
+                "stream": False,
+                "format": "json",
+                "options": {"temperature": temperature, "num_ctx": 8192},
+            }
+            data = _post(client, f"{base_url}/api/chat", {}, body)
             text = data["message"]["content"] or ""
+        else:
+            raise LLMError(f"unsupported provider: {provider.name}")
     except (KeyError, IndexError, TypeError) as exc:
         raise LLMError(f"unexpected {provider.name} reply shape") from exc
     if not text.strip():

@@ -59,7 +59,7 @@ OPTIONAL_PACKAGES = {
     "soundfile": "soundfile",
     "faster_whisper": "faster-whisper",
 }
-PROVIDERS = ("gemini", "openrouter", "openai", "ollama")
+PROVIDERS = ("openrouter", "ollama", "openai")
 
 failures = 0
 
@@ -119,11 +119,9 @@ def provider_status(values: dict[str, str]) -> list[tuple[str, str]]:
         key = values.get(f"{prefix}_API_KEY", "").strip()
         model = values.get(f"{prefix}_MODEL", "").strip()
         if name == "ollama":
-            if model:
-                results.append(("OK", "llm ollama: model set (last-resort fallback)"))
-            else:
-                results.append(("OPT", "llm ollama: not configured (optional fallback)"))
-        elif key and model:
+            results.append(("OK", "llm ollama: model set (local service is checked separately)") if model else ("OPT", "llm ollama: not configured"))
+            continue
+        if key and model:
             results.append(("OK", f"llm {name}: key and model set"))
         elif key:
             results.append(("WARN", f"llm {name}: key set but {prefix}_MODEL is empty"))
@@ -143,11 +141,11 @@ def check_env_file() -> None:
     statuses = provider_status(values)
     for status, message in statuses:
         report(status, message)
-    cloud_ready = sum(1 for s, m in statuses if s == "OK" and "ollama" not in m)
-    if cloud_ready == 0:
-        report("FAIL", "no usable cloud LLM provider (need a key and a model name)")
-    elif cloud_ready == 1:
-        report("WARN", "only one cloud LLM provider ready; R11 wants a second as backup")
+    configured = sum(1 for status, _ in statuses if status == "OK")
+    if configured == 0:
+        report("FAIL", "no usable LLM provider configured (need a model and any required API key)")
+    elif configured == 1:
+        report("WARN", "only one LLM provider configured; R11 wants a second as backup")
     publishing = common.env_flag(values, "FRAMESMITH_PUBLISHING_ENABLED", False)
     generation = common.env_flag(values, "FRAMESMITH_GENERATION_ENABLED", True)
     report("OK", f"kill switches: publishing={publishing}, generation={generation}")
@@ -190,7 +188,6 @@ def main() -> int:
     check_tool("ffmpeg", ["-version"], required=True, hint="install FFmpeg and add to PATH")
     check_tool("git", ["--version"], required=True)
     check_tool("espeak-ng", ["--version"], required=False, hint="needed by Kokoro on Day 1")
-    check_tool("ollama", ["--version"], required=False, hint="last-resort local LLM")
     check_tool(
         "nvidia-smi",
         ["--query-gpu=name,memory.total", "--format=csv,noheader"],

@@ -10,7 +10,7 @@ do it. Tick a box only when its "done when" is true and add the date. Run `pytho
 ## Next actions (in order)
 
 1. **(done 2026-10-10)** Repo pushed to GitHub; Python venv and declared dependencies installed; `python scripts/check_env.py` reports no `[FAIL]`.
-2. **(done 2026-10-10)** Configured OpenRouter as the free first provider plus OpenAI as the last fallback using only the existing $5 credit; Gemini disabled after HTTP 402 for depleted prepay credit.
+2. Configure OpenRouter as the free first provider, local Ollama as second, and OpenAI as the last fallback using only the existing $5 credit.
 3. **(you)** Choose and human-edit one of the three generated ideas, or write a new premise yourself.
 4. **(you)** Install ComfyUI and Kokoro; fill the brand TODOs in `configs/brands/lanternfall.yaml`.
 5. **(you)** Do the free platform setup in the R9 track below; it takes a month for AdSense review, so start early.
@@ -38,7 +38,8 @@ do it. Tick a box only when its "done when" is true and add the date. Run `pytho
 Done when: one idea becomes one valid script JSON and one WAV.
 
 - [x] Node LTS, FFmpeg 9.0.2 and Git on PATH (`check_env.py` confirms) (2026-10-10)
-- [x] OpenRouter free-tier key plus OpenAI last-fallback key in `.env`; Gemini disabled after HTTP 402; selected active model IDs are in `.env.example` (existing OpenAI credit only) (2026-10-10)
+- [x] OpenRouter, local Ollama, and OpenAI (last fallback, existing credit only) configured in `.env` (2026-10-10)
+- [ ] Install Ollama, pull `qwen3.5:4b-q4_K_M`, and verify the local API/model response
 - [x] `python scripts/generate.py ideas --count 3` works through OpenRouter free model and writes valid JSON (2026-10-10)
 - [ ] **(you)** Edit the chosen premise yourself (R7), then `python scripts/generate.py script ...` gives a valid script
 - [ ] **(you)** Brand sheet: narrator voice (audition the Kokoro candidates), image checkpoint, caption font, one character, a second narrator style and a second visual treatment

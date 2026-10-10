@@ -55,7 +55,7 @@ Conclusion: platform ad payouts are a slow lane. The $500/month gate is reachabl
 ### R5. V1 zero-cost stack (supersedes "V1 Model Choices")
 | Function | Choice | Cost | Notes |
 | --- | --- | --- | --- |
-| Ideas and scripts | OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` first; OpenAI `gpt-6-luna` last | $0 while OpenRouter succeeds; existing $5 OpenAI API credit only if OpenRouter fails | Gemini is disabled because its project returned HTTP 402 for depleted prepay credit. OpenCode Zen's free tier returned HTTP 403 when called from Framesmith: free access is limited to requests from within OpenCode, so it is not a free API fallback for this app. Do not add credits or enable auto-recharge. No Groq. Set a $5 OpenAI project spend limit. Models and quotas change; recheck before use. OpenRouter's selected free model does not enforce JSON mode; app schema validation does. Ollama remains an optional manual fallback. |
+| Ideas and scripts | OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` first; local Ollama `qwen3.5:4b-q4_K_M` second; OpenAI `gpt-6-luna` last | $0 while OpenRouter or Ollama succeeds; existing $5 OpenAI API credit only if both fail | Supported V1 chain is OpenRouter → local Ollama → OpenAI. Gemini returned HTTP 402 for depleted prepay credit; OpenCode Zen free inference returned HTTP 403 outside its app. Do not add credit or auto-recharge. Set a $5 OpenAI project spend limit. Models and quotas change; recheck before use. OpenRouter's selected free model does not enforce JSON mode; app schema validation does. Ollama uses the local `/api/chat` endpoint with JSON format and 8K context. |
 | Images | ComfyUI (v0.18+ has Dynamic VRAM by default) with an SDXL-family anime checkpoint (Illustrious or NoobAI) as the default; test Z-Image Turbo and FLUX.2 Klein 4B GGUF Q4 | $0 | One image at a time on 6 GB. Verify each checkpoint's commercial license and store it in the asset log. Gemini image free quotas are inconsistent across sources; treat as a bonus only. |
 | Narration | Kokoro-82M (Apache-2.0, about 300 MB, real-time on CPU) | $0 | Keeps the GPU free for images. A/B test Qwen3-TTS 0.6B (Apache-2.0 upstream; a community server reports about 4 GB VRAM in use). Skip the 1.7B model. |
 | Caption timing | Forced alignment of the known script to the audio (WhisperX or faster-whisper word timestamps) | $0 | Do not re-transcribe text you already have. |
@@ -122,7 +122,7 @@ Scope rule: if a step slips by more than half a day, cut scope rather than exten
 - [ ] Install Python 3.11+, Node LTS, FFmpeg, Git. Confirm each with `--version`.
 - [ ] Install ComfyUI (Windows portable build) and generate one SDXL-family anime image. Save the workflow JSON.
 - [ ] Install Kokoro (`pip install kokoro soundfile`, plus espeak-ng) and render one test sentence to a 24 kHz WAV.
-- [ ] Configure OpenRouter as the free first provider, with OpenAI `gpt-6-luna` as the final fallback using only the existing $5 credit. Gemini is disabled after its billing error. Store keys in `.env`, never in git. Do not activate Groq.
+- [x] Configure OpenRouter first, local Ollama second, and OpenAI `gpt-6-luna` last with only the existing $5 credit; store cloud keys in `.env`, never in git. Ollama needs no API key. (2026-10-10)
 - [ ] Write one script: idea JSON, then timed script JSON (Part IV schema), with schema validation, 3 retries, and provider fallback.
 - [ ] Fix the brand sheet: name, narrator voice, visual style, one character identity block.
 - [ ] Done when: one idea becomes one valid script JSON and one WAV.
@@ -152,7 +152,7 @@ Scope rule: if a step slips by more than half a day, cut scope rather than exten
 **Fallbacks**
 - Image generation too slow: use fewer stills per video (6) or generate manually in the Gemini app and import.
 - Remotion slows you down: burn ASS captions and motion with FFmpeg only until Gate A.
-- Free LLM quota hit: switch provider; use local Qwen via Ollama only as a last resort.
+- Free OpenRouter quota hit: use the existing OpenAI credit only if needed; otherwise pause generation until the free quota resets.
 
 
 ### R12. Long-form expansion rule — V1.5 pilot in Weeks 2–3
@@ -249,7 +249,7 @@ Building the repo scaffold turned several open details into decisions. They bind
 | Agent entry points | `AGENTS.md` (rules for coding agents), `CLAUDE.md` (imports AGENTS.md) and `Roadmap.md` (checkbox progress tracker; tick a box and add the date in the same change that finishes the task). |
 | Content IDs | `lf-short-001`, `lf-long-001`, and so on. Derivative Shorts set `parent_content_id` to the long-form episode. Pattern `^[a-z0-9][a-z0-9-]{2,40}$`. |
 | Schemas | `schemas/{idea,script,render_spec}.schema.json` are strict (`additionalProperties: false`) so model drift fails validation and triggers a retry. Idea scores are integers 1–5: 5 is best for `visual_potential` and `novelty`; 5 is worst for `production_difficulty` and `policy_risk`. |
-| LLM calls | Providers in `FRAMESMITH_LLM_PROVIDERS` order (default openrouter, openai). OpenRouter is the free attempt; OpenAI is the paid final fallback and may spend only the existing $5 credit. Gemini remains optional in code but is excluded from the active order after its billing error. Up to `FRAMESMITH_LLM_MAX_RETRIES` (3) attempts per provider; invalid output is fed back to the model; then the next provider. Model names are configured in `.env` and recorded per video. Code sets `content_id`, `niche`, `language`, `content_type`, segment `index` and `estimated_duration_seconds`. |
+| LLM calls | Providers in `FRAMESMITH_LLM_PROVIDERS` order (default openrouter, ollama, openai). OpenRouter is the free attempt; local Ollama is the no-cost second fallback; OpenAI is last and may spend only the existing $5 credit. Up to `FRAMESMITH_LLM_MAX_RETRIES` (3) attempts per provider; invalid output is fed back to the model; then the next provider. Model names are configured in `.env` and recorded per video. Code sets `content_id`, `niche`, `language`, `content_type`, segment `index` and `estimated_duration_seconds`. |
 | Prompts | `prompts/niches/ai_stories/*_v1.md`; the `id` in each file's front matter is the prompt version. `scripts/generate.py` writes `{content_id}.meta.json` next to each script with provider, model, prompt id and story structure. |
 | Render spec | Paths are relative to `v1/`: `assets/{id}/scene-01.png`, `audio/{id}.wav`, `subtitles/{id}.json` (Remotion draws the captions; `.ass` only for the FFmpeg-only fallback). Specs are saved as `v1/renders/{id}.spec.json` and committed, so a render can be reproduced. Shorts are 1080x1920, long-form 1920x1080, both 30 fps. |
 | Tracking log | `log.csv` columns: `content_id, content_type, parent_content_id, title, date, platform, url, story_structure, hook_family, narrator_style, visual_treatment, duration_seconds, script_version, model_names, active_minutes, cost_usd, human_pass, disclosure, views_24h, views_72h, views_latest, viewed_vs_swiped, avg_pct_viewed, followers_gained, ctr, first30_retention, avg_view_duration_s, notes`. Repeat the production fields on every platform row of a video. `scripts/review.py` takes the maximum of `active_minutes` and `cost_usd`, sums views and averages percentages per video. |
@@ -2473,6 +2473,10 @@ analytics/metrics.md          # metric definitions
 ## 2026-10-10 (Gemini disabled; OpenCode Zen API evaluated)
 - Disabled Gemini in the active provider order after its live request returned HTTP 402 for depleted prepay credit. OpenRouter remains first; OpenAI remains the last fallback using only the existing credit.
 - Reviewed OpenRouter's live free-model catalog and OpenCode Zen's official model/API documentation. OpenCode lists `nemotron-3-ultra-free` at a zero model price, but a live request from Framesmith returned HTTP 403 `FreeTierError`: free inference is limited to the OpenCode app. Do not add it as a Framesmith provider or spend money to bypass this restriction. Keep its model ID as an OpenCode-app option only.
+
+## 2026-10-10 (V1 providers simplified)
+- Removed Gemini and Ollama from the supported provider implementation, environment check and tests. Framesmith V1 supports only OpenRouter then OpenAI; OpenCode Zen's free endpoint remains app-only and is not configured or used.
+- Removed Gemini and OpenCode credentials/model settings from the local `.env` and kept `.env.example` limited to the two supported providers.
 ```
 # Part XXXVII — Current Tool References
 ## Official References
@@ -2493,6 +2497,13 @@ analytics/metrics.md          # metric definitions
 - Faster-Whisper: https://github.com/SYSTRAN/faster-whisper
 - ComfyUI: https://github.com/Comfy-Org/ComfyUI
 - Ollama: https://github.com/ollama/ollama
+
+## 2026-10-10 (Ollama restored as the local second fallback)
+- Owner clarified that Ollama should remain alongside OpenRouter and OpenAI. Prior removal reflected the literal earlier instruction to keep only OpenRouter and OpenAI; Ollama was not found broken.
+- Current V1 order: OpenRouter free endpoint → local Ollama `qwen3.5:4b-q4_K_M` → OpenAI `gpt-6-luna` using only existing $5 credit. Gemini and OpenCode remain excluded. Ollama uses `FRAMESMITH_OLLAMA_URL` and requires no key.
+- Laptop has Ryzen 7 5800H, 32 GB RAM, RTX 3060 Laptop GPU with 6 GB VRAM. Use the ~3.3 GB Q4_K_M model and 8K context. Keep only one GPU-heavy model active; stop/unload ComfyUI image models before Ollama inference.
+- Model registry and API references checked 2026-10-10: https://registry.ollama.com/library/qwen3.5:4b-q4_K_M ; https://docs.ollama.com/api/chat ; Windows installer: https://ollama.com/download/windows . The model registry lists Apache 2.0 licensing.
+- Installation and local inference remain a Roadmap task until the laptop runtime and API are verified.
 - llama.cpp: https://github.com/ggml-org/llama.cpp
 - LiteLLM: https://github.com/BerriAI/litellm
 - Temporal: https://docs.temporal.io/temporal

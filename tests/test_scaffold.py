@@ -248,21 +248,22 @@ def test_agents_md_points_to_roadmap_and_blueprint():
 
 def test_provider_status_reports_each_state():
     env = {
-        "FRAMESMITH_GEMINI_API_KEY": "a",
-        "FRAMESMITH_GEMINI_MODEL": "m",
+        "FRAMESMITH_GEMINI_API_KEY": "stale-key",
+        "FRAMESMITH_GEMINI_MODEL": "stale-model",
         "FRAMESMITH_OPENAI_API_KEY": "b",
         "FRAMESMITH_OPENAI_MODEL": "m",
         "FRAMESMITH_OPENROUTER_MODEL": "m",
     }
     states = {msg.split(":")[0]: status for status, msg in check_env.provider_status(env)}
-    assert states["llm gemini"] == "OK"
     assert states["llm openai"] == "OK"
     assert states["llm openrouter"] == "WARN"  # model without key
     assert states["llm ollama"] == "OPT"
+    assert "llm gemini" not in states
+    assert "llm opencode" not in states
 
 
 def test_provider_status_never_prints_key_text():
-    env = {"FRAMESMITH_GEMINI_API_KEY": "SECRET-VALUE", "FRAMESMITH_GEMINI_MODEL": "m"}
+    env = {"FRAMESMITH_OPENROUTER_API_KEY": "SECRET-VALUE", "FRAMESMITH_OPENROUTER_MODEL": "m"}
     assert all("SECRET-VALUE" not in msg for _, msg in check_env.provider_status(env))
 
 

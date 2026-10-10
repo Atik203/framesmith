@@ -45,7 +45,7 @@ A private repo for an AI-assisted English-language video business: short-form (S
 
 | Function | Choice |
 | --- | --- |
-| Ideas and scripts | OpenRouter free models first, then the owner's existing $5 OpenAI API credit as the paid final fallback through `scripts/generate.py`. Gemini is disabled after its billing error. OpenCode Zen free inference is limited to the OpenCode app and is not a Framesmith API fallback. Do not add credit or auto-recharge. Do not use Groq. |
+| Ideas and scripts | OpenRouter free model first, local Ollama second, then the owner's existing $5 OpenAI API credit as the paid final fallback through `scripts/generate.py`. No Gemini or OpenCode provider. Do not add credit or auto-recharge. |
 | Images | ComfyUI, SDXL-family anime checkpoint, one image at a time on 6 GB. Check each checkpoint's commercial license. |
 | Narration | Kokoro-82M on CPU. A/B candidate: Qwen3-TTS 0.6B. Never the 1.7B model. |
 | Caption timing | Forced alignment of the known script to the audio (WhisperX or faster-whisper). Do not re-transcribe text we already have. |
@@ -83,7 +83,7 @@ Paths inside a render spec are relative to `v1/`.
 | --- | --- |
 | `scripts/check_env.py` | Tools on PATH, packages, `.env` (provider keys and models, never prints values), folders, `log.csv` header. |
 | `scripts/validate.py` | `python scripts/validate.py idea\|script\|render_spec FILE`: schema plus sanity checks (durations, words per second, scene gaps). |
-| `scripts/generate.py` | `ideas` and `script` subcommands. OpenRouter free tier first, optional OpenAI paid fallback last; schema validation, up to 3 attempts per provider. Gemini is disabled in the active order. Writes JSON plus a `.meta.json` with provider, model and prompt id. Rotates story structure so none repeats back to back. |
+| `scripts/generate.py` | `ideas` and `script` subcommands. OpenRouter free tier, local Ollama, then optional OpenAI paid fallback; schema validation, up to 3 attempts per provider. Writes JSON plus a `.meta.json` with provider, model and prompt id. Rotates story structure so none repeats back to back. |
 | `scripts/build_render_spec.py` | Script JSON (+ narration WAV length) -> `v1/renders/{id}.spec.json`. Shorts only. |
 | `scripts/review.py` | Gate A/B progress, R7 variation rules, best/worst videos from `log.csv`. Read-only. |
 | `scripts/common.py`, `scripts/llm.py` | Shared helpers (env, kill switches, ids) and the provider-fallback client. Import, do not run. |

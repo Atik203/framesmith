@@ -29,10 +29,9 @@ git commit -m "Initial Framesmith scaffold"
 
 ### `.env`
 
-Put the OpenRouter key in `.env` for free-first generation. Gemini is currently disabled because its
-configured project returned a billing error. OpenAI `gpt-6-luna` is the paid final
-fallback and must use only the existing $5 credit; do not enable auto-recharge or add credit. Groq is not
-used. Model defaults are shown in `.env.example` and configured in `.env`; recheck free availability before generation.
+Put the OpenRouter key in `.env` for free-first generation. Ollama runs locally as the second
+fallback; OpenAI `gpt-6-luna` is last and limited to the existing $5 credit. Do not enable auto-recharge
+or add credit. Model defaults are shown in `.env.example` and configured in `.env`; recheck free availability before generation.
 `FRAMESMITH_PUBLISHING_ENABLED` stays `false` in V1 (publishing is manual).
 
 ## 2. Daily commands
