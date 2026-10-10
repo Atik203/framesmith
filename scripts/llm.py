@@ -1,6 +1,6 @@
 """LLM calls with JSON validation, retries and provider fallback (blueprint R5, R11).
 
-Providers are tried in FRAMESMITH_LLM_PROVIDERS order: openrouter, opencode, openai.
+Providers are tried in FRAMESMITH_LLM_PROVIDERS order: openrouter, openai.
 Model names are never hard-coded: set FRAMESMITH_<PROVIDER>_MODEL in .env.
 API keys travel in request headers only and never appear in raised messages.
 """
@@ -16,12 +16,11 @@ from typing import Any
 
 import httpx
 
-KNOWN_PROVIDERS = ("gemini", "openrouter", "opencode", "openai", "ollama")
-DEFAULT_ORDER = "openrouter,opencode,openai"
-NEEDS_KEY = {"gemini", "openrouter", "opencode", "openai"}
+KNOWN_PROVIDERS = ("gemini", "openrouter", "openai", "ollama")
+DEFAULT_ORDER = "openrouter,openai"
+NEEDS_KEY = {"gemini", "openrouter", "openai"}
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENCODE_URL = "https://opencode.ai/zen/v1/chat/completions"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 OLLAMA_DEFAULT_URL = "http://127.0.0.1:11434"
 RETRYABLE_STATUS = {408, 425, 429, 500, 502, 503, 504}
@@ -152,7 +151,7 @@ def request_text(
             )
             parts = data["candidates"][0]["content"]["parts"]
             text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
-        elif provider.name in ("openrouter", "opencode", "openai"):
+        elif provider.name in ("openrouter", "openai"):
             body: dict[str, Any] = {
                 "model": provider.model,
                 "messages": _messages(system, user),
@@ -161,11 +160,7 @@ def request_text(
             if provider.name == "openai":
                 body["response_format"] = {"type": "json_object"}
                 body["reasoning_effort"] = "none"
-            url = {
-                "openrouter": OPENROUTER_URL,
-                "opencode": OPENCODE_URL,
-                "openai": OPENAI_URL,
-            }[provider.name]
+            url = OPENAI_URL if provider.name == "openai" else OPENROUTER_URL
             data = _post(client, url, {"Authorization": f"Bearer {provider.api_key}"}, body)
             text = data["choices"][0]["message"]["content"] or ""
         else:  # ollama

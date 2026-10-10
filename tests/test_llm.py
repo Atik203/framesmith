@@ -7,15 +7,12 @@ import pytest
 KEY_A = "key-gemini-123456"
 KEY_B = "key-openrouter-654321"
 KEY_C = "key-openai-abcdef"
-KEY_D = "key-opencode-abcdef"
 ENV = {
-    "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,opencode,openai",
+    "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
     "FRAMESMITH_GEMINI_API_KEY": KEY_A,
     "FRAMESMITH_GEMINI_MODEL": "gem-model",
     "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,
     "FRAMESMITH_OPENROUTER_MODEL": "nvidia/nemotron-3-ultra-550b-a55b:free",
-    "FRAMESMITH_OPENCODE_API_KEY": KEY_D,
-    "FRAMESMITH_OPENCODE_MODEL": "nemotron-3-ultra-free",
     "FRAMESMITH_OPENAI_API_KEY": KEY_C,
     "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",
 }
@@ -143,28 +140,6 @@ def test_openrouter_uses_bearer_header():
     assert "response_format" not in seen["body"]
 
 
-def test_opencode_zen_uses_compatible_endpoint_and_bearer_header():
-    seen = {}
-
-    def handler(request):
-        seen["url"] = str(request.url)
-        seen["auth"] = request.headers.get("authorization")
-        seen["body"] = json.loads(request.content)
-        return openai_reply('{"ok": true}')
-
-    env = {**ENV, "FRAMESMITH_LLM_PROVIDERS": "opencode"}
-    result, _ = run(handler, env)
-    assert result.provider == "opencode" and result.model == "nemotron-3-ultra-free"
-    assert seen["url"] == "https://opencode.ai/zen/v1/chat/completions"
-    assert seen["auth"] == f"Bearer {KEY_D}"
-    assert seen["body"]["model"] == "nemotron-3-ultra-free"
-    assert seen["body"]["messages"] == [
-        {"role": "system", "content": "system"},
-        {"role": "user", "content": "user"},
-    ]
-    assert "response_format" not in seen["body"]
-
-
 def test_openai_uses_chat_completions_json_mode_and_bearer_header():
     seen = {}
 
@@ -202,33 +177,32 @@ def test_ollama_uses_native_chat_endpoint():
 
 def test_total_failure_message_never_contains_keys():
     def handler(request):
-        return httpx.Response(500, text=f"boom {KEY_A} {KEY_B} {KEY_C} {KEY_D}")
+        return httpx.Response(500, text=f"boom {KEY_A} {KEY_B} {KEY_C}")
 
     with pytest.raises(llm.LLMError) as caught:
         run(handler)
     message = str(caught.value)
     assert "all providers failed" in message
-    assert all(key not in message for key in (KEY_A, KEY_B, KEY_C, KEY_D))
+    assert all(key not in message for key in (KEY_A, KEY_B, KEY_C))
 
 
 def test_provider_without_model_or_key_is_skipped():
     env = {
-        "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,opencode,openai",
+        "FRAMESMITH_LLM_PROVIDERS": "gemini,openrouter,openai",
         "FRAMESMITH_GEMINI_API_KEY": KEY_A,  # no model
         "FRAMESMITH_OPENROUTER_API_KEY": KEY_B,  # no model
-        "FRAMESMITH_OPENCODE_MODEL": "nemotron-3-ultra-free",  # no key
         "FRAMESMITH_OPENAI_MODEL": "gpt-6-luna",  # no key
     }
     providers, skipped = llm.configured_providers(env)
     assert providers == []
-    assert len(skipped) == 4
+    assert len(skipped) == 3
 
 
 def test_default_provider_order_uses_verified_free_endpoint_first():
     env = {key: value for key, value in ENV.items() if key != "FRAMESMITH_LLM_PROVIDERS"}
     providers, skipped = llm.configured_providers(env)
     assert skipped == []
-    assert [provider.name for provider in providers] == ["openrouter", "opencode", "openai"]
+    assert [provider.name for provider in providers] == ["openrouter", "openai"]
 
 
 def test_no_usable_provider_raises_clear_error():
