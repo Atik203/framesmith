@@ -24,7 +24,7 @@
   },
   "scripts": {
     "dev": "node api.js && remotion studio",
-    "build": "remotion bundle",
+    "build": "node api.js && remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   }
